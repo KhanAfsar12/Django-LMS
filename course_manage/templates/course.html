@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,20 +10,91 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
 
     <style>
-        /* Optional: Add custom styling for the modal */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .container {
+            padding-top: 2rem;
+        }
+
+        h1 {
+            color: #343a40;
+        }
+
+        .card {
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: none;
+            border-radius: 10px;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            color: #007bff;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .card-text {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        .card-body ul {
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .card-body ul li {
+            padding: 8px 0;
+            font-size: 1rem;
+        }
+
+        .card-body ul li a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .card-body ul li a:hover {
+            text-decoration: underline;
+        }
+
         .modal-dialog {
             max-width: 90%;
         }
+
         .modal-content {
-            border-radius: 0;
+            border-radius: 10px;
+        }
+
+        .modal-header {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .modal-footer {
+            border-top: none;
+        }
+
+        .pdf-icon {
+            color: #e3342f;
+            margin-right: 8px;
         }
     </style>
 </head>
+
 <body>
-    <div class="container mt-5">
+    <div class="container">
         <h1>{{ course.title }}</h1>
         <p>{{ course.description }}</p>
-        
+
         <h3>Topics:</h3>
         <div class="row">
             {% for topic in course.topics.all %}
@@ -36,7 +108,7 @@
                             {% for video in topic.videos.all %}
                             <li>
                                 <a href="#" data-toggle="modal" data-target="#videoModal" data-video-url="{{ video.video_file.url }}">
-                                    {{ video.title }}
+                                    <i class="fas fa-play-circle"></i> {{ video.title }}
                                 </a>
                             </li>
                             {% endfor %}
@@ -44,8 +116,8 @@
                         {% for pdf in topic.pdfs.all %}
                         {% if pdf.pdf_file %}
                         <p>
-                            <a href="{{ pdf.pdf_file.url }}" target="_blank" class="fas fa-file-pdf">
-                                {{ pdf.title }}
+                            <a href="{{ pdf.pdf_file.url }}" target="_blank">
+                                <i class="fas fa-file-pdf pdf-icon"></i>{{ pdf.title }}
                             </a>
                         </p>
                         {% endif %}
@@ -56,7 +128,7 @@
             {% endfor %}
         </div>
     </div>
-    
+
     <!-- Video Modal -->
     <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="videoModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg" role="document">
@@ -79,24 +151,25 @@
             </div>
         </div>
     </div>
-    
+
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    
+
     <!-- Custom JS to handle video modal -->
     <script>
         $(document).ready(function() {
-            $('#videoModal').on('show.bs.modal', function (event) {
-                var link = $(event.relatedTarget); // Button that triggered the modal
-                var videoUrl = link.data('video-url'); // Extract info from data-* attributes
-                
+            $('#videoModal').on('show.bs.modal', function(event) {
+                var link = $(event.relatedTarget);
+                var videoUrl = link.data('video-url');
+
                 var modal = $(this);
-                modal.find('#videoSource').attr('src', videoUrl); // Update the video source
-                modal.find('#videoPlayer')[0].load(); // Load the new video
+                modal.find('#videoSource').attr('src', videoUrl);
+                modal.find('#videoPlayer')[0].load();
             });
         });
     </script>
 </body>
+
 </html>
