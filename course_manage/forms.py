@@ -1,7 +1,7 @@
 from django import forms
-from .models import Course, Topic, Video
+from .models import Answer
 
-class CourseForm(forms.ModelForm):
+class AnswerForm(forms.ModelForm):
     class Meta:
-        model = Course
-        fields = ['title', 'description']
+        model = Answer
+        fields = ['text']

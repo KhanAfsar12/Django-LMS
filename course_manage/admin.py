@@ -1,10 +1,43 @@
 from django.contrib import admin
-from .models import Course, Topic, Video, PDF
+from .models import Course, Topic, Video, PDF, Exam, Question, Answer
+from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter, DropdownFilter, ChoiceDropdownFilter, SimpleListFilter
 # Register your models here.
 
+class CourseAdmin(admin.ModelAdmin):
+    list_display = ['title', 'description', 'credits', 'start_date', 'end_date', 'course_image', 'created_by']
+    search_fields = ['title', 'description', 'created_by__username']
+    list_filter = (
+        ('created_by', RelatedDropdownFilter),
+    )
+ 
+admin.site.register(Course, CourseAdmin)
 
-admin.site.register(Course)
-admin.site.register(Topic)
-admin.site.register(Video)
-admin.site.register(PDF)
 
+
+class VideoAdmin(admin.ModelAdmin):
+    list_display = ['title', 'topic']
+    search_fields = ['title', 'topic']
+
+admin.site.register(Video, VideoAdmin)
+
+
+
+class PDFAdmin(admin.ModelAdmin):
+    list_display = ['topic', 'pdf_file', 'title']
+    search_fields = ['topic', 'pdf_file', 'title']
+
+admin.site.register(PDF, PDFAdmin)
+
+
+
+class TopicAdmin(admin.ModelAdmin):
+    list_display = ['course', 'title', 'description']
+    search_fields = ['course', 'title', 'description']
+
+
+admin.site.register(Topic, TopicAdmin)
+
+
+admin.site.register(Exam)
+admin.site.register(Question)
+admin.site.register(Answer)

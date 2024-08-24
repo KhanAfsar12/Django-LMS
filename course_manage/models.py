@@ -40,3 +40,35 @@ class Video(models.Model):
 
     def __str__(self):
         return f"{self.title} - {self.topic.title}"
+    
+
+
+class Exam(models.Model):
+    course = models.ForeignKey(Topic, on_delete=models.CASCADE, related_name='exams')
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    start_date = models.DateTimeField()
+    end_date = models.DateTimeField()
+
+    def __str__(self):
+        return self.title
+
+
+class Question(models.Model):
+    exam = models.ForeignKey(Exam, on_delete=models.CASCADE, related_name='questions')
+    text = models.TextField()
+    is_multiple_choice = models.BooleanField(default=False)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return self.text
+    
+
+class Answer(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
+    text = models.CharField(max_length=255)
+    is_correct = models.BooleanField(default=False)
+    student_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+
+    def __str__(self):
+        return self.text
