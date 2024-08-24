@@ -12,6 +12,11 @@
             background-color: #f8f9fa;
         }
 
+        .nav{
+            margin-left: 1200px;
+            margin-top: 20px;
+        }
+
         .card {
             border: none;
             border-radius: 15px;
@@ -71,6 +76,11 @@
     </style>
 </head>
 <body>
+    {% if not request.user.is_authenticated %}
+    <div class="nav">
+        <a href="{% url 'login' %}">Login</a>
+    </div>
+    {% endif %}
     <div class="container mt-5">
         <div class="text-center mb-5">
             <h1 class="display-4">Our Courses</h1>
