@@ -1,5 +1,9 @@
-from django.shortcuts import render
-from .models import Course, Topic, Video
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.forms import modelformset_factory
+from .forms import AnswerForm
+from .models import Answer, Course, Exam, Question, Topic, Video
+from django.contrib import messages
 # Create your views here.
 
 def viewCourse(request):
@@ -9,7 +13,7 @@ def viewCourse(request):
 
 def get_course_with_topics_and_videos(id):
     try:
-        course = Course.objects.prefetch_related('topics__videos', 'topics__pdfs').select_related('created_by').get(id=id)
+        course = Course.objects.prefetch_related('topics__videos', 'topics__pdfs', 'topics__exams').select_related('created_by').get(id=id)
         
         return course
 
@@ -18,11 +22,43 @@ def get_course_with_topics_and_videos(id):
 
 
 def ParticularCourse(request, id):
-    # course = Course.objects.filter(id=id).first()
-    # topics_with_videos = Topic.objects.filter(id=course.id).prefetch_related('videos')
-    # return render(request, 'course.html', {'topics_with_videos': topics_with_videos})
+    request.session['course_id'] = id
     course = get_course_with_topics_and_videos(id)
     if course:
         return render(request, 'course.html', {'course': course})
     else:
         return render(request, '404.html')
+    
+
+def exam_details(request, exam_id):
+    exam = get_object_or_404(Exam, pk=exam_id)
+    questions = exam.questions.all()
+
+    question_form_pairs = []
+
+    if request.method == 'POST':
+        all_valid = True 
+        for question in questions:
+            form = AnswerForm(request.POST, prefix=str(question.id))
+            if form.is_valid():
+                answer = form.save(commit=False)
+                answer.question = question
+                answer.user = request.user
+                answer.save()
+            else:
+                all_valid = False
+            question_form_pairs.append((question, form))
+        if all_valid:
+            course_id = request.session.get('course_id')
+            if course_id:
+                messages.success(request, 'Exam completed')
+                return redirect('ParticularCourse', id=course_id)
+            else:
+                return render(request, '404.html')
+        else:
+            messages.warning(request, 'Some answers were invalid. Please correct them.')
+    else:
+        for question in questions:
+            form = AnswerForm(prefix=str(question.id))
+            question_form_pairs.append((question, form))
+    return render(request, 'exam_detail.html', {'exam': exam, 'question_form_pairs': question_form_pairs})

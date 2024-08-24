@@ -122,6 +122,18 @@
                         </p>
                         {% endif %}
                         {% endfor %}
+
+                        {% for exam in topic.exams.all %}
+                        {% if exam %}
+                        <p>
+                            <a href="{% url 'exam_detail' exam.id %}">
+                                <i class="fas fa-book exam-icon"></i>{{ exam.title }}
+                            </a>
+                        </p>
+                        {% else %}
+                            <h3>Exam is not available</h3>
+                        {% endif %}
+                        {% endfor %}
                     </div>
                 </div>
             </div>
