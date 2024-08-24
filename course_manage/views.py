@@ -4,6 +4,7 @@ from django.forms import modelformset_factory
 from .forms import AnswerForm
 from .models import Answer, Course, Exam, Question, Topic, Video
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def viewCourse(request):
@@ -20,8 +21,11 @@ def get_course_with_topics_and_videos(id):
     except Course.DoesNotExist:
         return None
 
-
 def ParticularCourse(request, id):
+    if not request.user.is_authenticated:
+        print(request.user)
+        return redirect('login')
+    print(request.user)
     request.session['course_id'] = id
     course = get_course_with_topics_and_videos(id)
     if course:
@@ -30,6 +34,7 @@ def ParticularCourse(request, id):
         return render(request, '404.html')
     
 
+@login_required
 def exam_details(request, exam_id):
     exam = get_object_or_404(Exam, pk=exam_id)
     questions = exam.questions.all()
@@ -43,7 +48,7 @@ def exam_details(request, exam_id):
             if form.is_valid():
                 answer = form.save(commit=False)
                 answer.question = question
-                answer.user = request.user
+                answer.student_id = request.user
                 answer.save()
             else:
                 all_valid = False

@@ -66,7 +66,7 @@ class Question(models.Model):
 
 class Answer(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
-    text = models.CharField(max_length=255)
+    text = models.CharField(max_length=1000)
     is_correct = models.BooleanField(default=False)
     student_id = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
 
