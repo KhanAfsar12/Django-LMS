@@ -23,7 +23,7 @@
             {% csrf_token %}
             {% for question, form in question_form_pairs %}
             <div class="question-card mb-4 p-4 shadow">
-                <b>Question:</b> <label>{{ question.text | safe }}</label><br>  <!-- Render LaTeX using safe -->
+                <b>Question:</b> <label>{{ question.text | safe }}</label><br>
                 {% if question.is_multiple_choice %}
                     {{ form.selected_choice }}
                 {% else %}
