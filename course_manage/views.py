@@ -34,6 +34,8 @@ def ParticularCourse(request, id):
         return render(request, '404.html')
     
 
+
+
 @login_required
 def exam_details(request, exam_id):
     exam = get_object_or_404(Exam, pk=exam_id)
@@ -42,28 +44,26 @@ def exam_details(request, exam_id):
     question_form_pairs = []
 
     if request.method == 'POST':
-        all_valid = True 
+        all_valid = True
         for question in questions:
-            form = AnswerForm(request.POST, prefix=str(question.id))
+            form = AnswerForm(request.POST, prefix=str(question.id), question=question)
             if form.is_valid():
                 answer = form.save(commit=False)
                 answer.question = question
-                answer.student_id = request.user
+                answer.student = request.user
                 answer.save()
             else:
                 all_valid = False
             question_form_pairs.append((question, form))
+        
         if all_valid:
-            course_id = request.session.get('course_id')
-            if course_id:
-                messages.success(request, 'Exam completed')
-                return redirect('ParticularCourse', id=course_id)
-            else:
-                return render(request, '404.html')
+            messages.success(request, 'Exam completed successfully.')
+            return redirect('viewCourse')
         else:
             messages.warning(request, 'Some answers were invalid. Please correct them.')
     else:
         for question in questions:
-            form = AnswerForm(prefix=str(question.id))
+            form = AnswerForm(prefix=str(question.id), question=question)
             question_form_pairs.append((question, form))
+
     return render(request, 'exam_detail.html', {'exam': exam, 'question_form_pairs': question_form_pairs})

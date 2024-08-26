@@ -1,103 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ exam.title }}</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
-    <style>
-
-        
-        /* Custom CSS */
-        body {
-            background-color: #f8f9fa;
-        }
-
-        .messages {
-            margin-top: 40px;
-        }
-        
-        .alert {
-            padding: 15px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-        
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .alert-error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        .alert-info {
-            background-color: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-        
-        .alert-warning {
-            background-color: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeeba;
-        }
-        
-
-        .exam-header {
-            background-color: #007bff;
-            color: white;
-            padding: 20px;
-            border-radius: 8px;
-        }
-
-        .exam-info {
-            margin-bottom: 20px;
-        }
-
-        .question-card {
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            padding: 20px;
-            background-color: white;
-        }
-
-        .question-card label {
-            font-weight: bold;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-        }
-    </style>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 </head>
-
 <body>
-
-
-    <div id="messages" class="messages">
-        {% if messages %}
-            {% for message in messages %}
-            <div id="message_{{ message.id }}" class="alert alert-{{ message.tags }}">
-                {{ message }}
-            </div>
-            {% endfor %}
-        {% endif %}
-    </div>
     <div class="container mt-5">
         <div class="exam-header text-center">
             <h1>{{ exam.title }}</h1>
@@ -110,13 +21,14 @@
     <div class="container mt-5">
         <form method="POST">
             {% csrf_token %}
-
             {% for question, form in question_form_pairs %}
-            <div class="question-card">
-                <div class="form-group">
-                    <b>Question:</b> <label>{{ question.text }}</label><br>
-                    <b>Answer:</b> {{ form.text }}
-                </div>
+            <div class="question-card mb-4 p-4 shadow">
+                <b>Question:</b> <label>{{ question.text | safe }}</label><br>  <!-- Render LaTeX using safe -->
+                {% if question.is_multiple_choice %}
+                    {{ form.selected_choice }}
+                {% else %}
+                    {{ form.text }}
+                {% endif %}
             </div>
             {% endfor %}
 
@@ -125,10 +37,5 @@
             </div>
         </form>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
-
 </html>
