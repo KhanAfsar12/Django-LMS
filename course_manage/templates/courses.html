@@ -32,10 +32,13 @@
         }
 
         .card-img-top {
-            border-top-left-radius: 15px;
-            border-top-right-radius: 15px;
+            border-top-left-radius: 0px;
+            border-top-right-radius: 0px;
             height: 200px;
             object-fit: cover;
+            padding: 40px;
+            border-radius: 50px;
+            
         }
 
         .card-body {
@@ -90,7 +93,7 @@
         <div class="row">
             {% for course in courses %}
             <div class="col-md-4 d-flex align-items-stretch">
-                <div class="card mb-4">
+                <div class="card mb-4" style="background: linear-gradient(rgb(143, 143, 245),white);">
                     <a href="{% url 'ParticularCourse' id=course.id %}">
                         <img src="{{ course.course_image.url }}" class="card-img-top" alt="{{ course.title }}">
                     </a>

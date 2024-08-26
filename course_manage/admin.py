@@ -1,14 +1,11 @@
 from django.contrib import admin
-from .models import Course, Topic, Video, PDF, Exam, Question, Answer
-from django_admin_listfilter_dropdown.filters import RelatedDropdownFilter, DropdownFilter, ChoiceDropdownFilter, SimpleListFilter
+from .models import Course, Topic, Video, PDF, Exam, Question, Answer, Choice
 # Register your models here.
 
 class CourseAdmin(admin.ModelAdmin):
     list_display = ['title', 'description', 'credits', 'start_date', 'end_date', 'course_image', 'created_by']
     search_fields = ['title', 'description', 'created_by__username']
-    list_filter = (
-        ('created_by', RelatedDropdownFilter),
-    )
+
  
 admin.site.register(Course, CourseAdmin)
 
@@ -41,3 +38,4 @@ admin.site.register(Topic, TopicAdmin)
 admin.site.register(Exam)
 admin.site.register(Question)
 admin.site.register(Answer)
+admin.site.register(Choice)

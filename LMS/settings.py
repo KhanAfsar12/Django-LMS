@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'course_manage',
     'authentication',
+    'ckeditor',
 ]
 
 MIDDLEWARE = [
@@ -128,3 +129,13 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
+
+CKEDITOR_CONFIGS = {
+    'default':{
+        'toolbar': 'full',
+        'extraPlugins': 'mathjax',
+        'mathJaxLib': 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js',
+        'height': 300,
+        'width': '100%',
+    },
+}
