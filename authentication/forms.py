@@ -43,3 +43,27 @@ class LoginForm(forms.Form):
         max_length=100,
         widget=forms.PasswordInput(attrs={'placeholder': 'Password'})
         )
+    
+
+
+class ForgetForm(forms.Form):
+    username = forms.CharField(
+        label='',
+        max_length=100,
+        widget=forms.TextInput(attrs={'placeholder': 'Enter username'})
+    )
+
+
+
+class ResetPasswordForm(forms.Form):
+    password1 = forms.CharField(
+        label='New Password',
+        widget=forms.PasswordInput(attrs={'placeholder': 'Enter password'})
+    )
+    password2 = forms.CharField(
+        label='Confirm Password',
+        widget=forms.PasswordInput(attrs={'placeholder': 'Confirm password'})
+    )
+
+    
+    
