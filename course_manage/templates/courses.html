@@ -1,3 +1,5 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -79,11 +81,8 @@
     </style>
 </head>
 <body>
-    {% if not request.user.is_authenticated %}
-    <div class="nav">
-        <a href="{% url 'login' %}">Login</a>
-    </div>
-    {% endif %}
+    {% include 'nav.html' %}
+ 
     <div class="container mt-5">
         <div class="text-center mb-5">
             <h1 class="display-4">Our Courses</h1>
@@ -95,7 +94,11 @@
             <div class="col-md-4 d-flex align-items-stretch">
                 <div class="card mb-4" style="background: linear-gradient(rgb(143, 143, 245),white);">
                     <a href="{% url 'ParticularCourse' id=course.id %}">
+                        {% if course.course_image %}
                         <img src="{{ course.course_image.url }}" class="card-img-top" alt="{{ course.title }}">
+                        {% else %}
+                        <img src="{% static 'https://beezz.app/storage/batches/default.png' %}" class="card-img-top" alt="Default image">
+                        {% endif %}
                     </a>
                     <div class="card-body d-flex flex-column">
                         <a href="{% url 'ParticularCourse' id=course.id %}">
@@ -133,5 +136,6 @@
             });
         });
     </script>
+    {% include 'footer.html' %}
 </body>
 </html>

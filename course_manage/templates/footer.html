@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #333;
+            color: #fff;
+            padding: 1rem;
+            text-align: left;
+            
+        }
+
+        .footer .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .footer .logo img {
+            height: 40px; /* Adjust height as needed */
+        }
+
+        .footer .company-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .footer .company-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .footer .copyright {
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .footer {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .footer .company-info {
+                margin-top: 1rem;
+            }
+
+            .footer .logo img {
+                height: 30px; 
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="footer">
+        <div class="logo">
+            <img src="" alt="Leewayzon">
+        </div>
+        <div class="company-info">
+            <div class="company-name">
+                Powered By
+            </div>
+            <div class="copyright">
+                &copy; Apache Foundation . All rights reserved. 
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -8,7 +8,7 @@ class Course(models.Model):
     credits = models.IntegerField()
     start_date = models.DateField()
     end_date = models.DateField()
-    course_image = models.ImageField(upload_to='profile_pics/', blank=True, default= "https://static.vecteezy.com/system/resources/thumbnails/020/765/399/small/default-profile-account-unknown-icon-black-silhouette-free-vector.jpg") 
+    course_image = models.ImageField(upload_to='course_image/', blank=True, null=True) 
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -81,3 +81,13 @@ class Answer(models.Model):
 
     def __str__(self):
         return self.selected_choice.text
+
+
+
+class CompanySettings(models.Model):
+    logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
+    powered_by = models.ImageField(upload_to='powered_by/', blank=True, null=True)
+    company_url = models.URLField(null=True, blank=True)
+
+    def __str__(self):
+        return "Company Settings"

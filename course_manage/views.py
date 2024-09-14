@@ -2,20 +2,22 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.forms import modelformset_factory
 from .forms import AnswerForm
-from .models import Answer, Course, Exam, Question, Topic, Video
+from .models import Answer, CompanySettings, Course, Exam, Question, Topic,  Video
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 def viewCourse(request):
     courses = Course.objects.all()
-    return render(request, 'courses.html', {'courses': courses})
+    user = request.user
+    company_settings = CompanySettings.objects.first()
+    print(company_settings)
+    return render(request, 'courses.html', {'courses': courses, 'user':user, 'company_settings':company_settings})
 
 
 def get_course_with_topics_and_videos(id):
     try:
         course = Course.objects.prefetch_related('topics__videos', 'topics__pdfs', 'topics__exams').select_related('created_by').get(id=id)
-        
         return course
 
     except Course.DoesNotExist:
@@ -28,6 +30,7 @@ def ParticularCourse(request, id):
     print(request.user)
     request.session['course_id'] = id
     course = get_course_with_topics_and_videos(id)
+    company_settings = CompanySettings.objects.first()
     if course:
         return render(request, 'course.html', {'course': course})
     else:
@@ -66,4 +69,4 @@ def exam_details(request, exam_id):
             form = AnswerForm(prefix=str(question.id), question=question)
             question_form_pairs.append((question, form))
 
-    return render(request, 'exam_detail.html', {'exam': exam, 'question_form_pairs': question_form_pairs})
+    return render(request, 'Q&A.html', {'exam': exam, 'question_form_pairs': question_form_pairs})
