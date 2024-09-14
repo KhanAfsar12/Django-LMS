@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #7977773d;
+            padding: 1rem;
+        }
+
+        .logo a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin: 0 1rem;
+        }
+
+        .nav-links a {
+            color: #000;
+            text-decoration: none;
+            font-size: 1.1rem;
+        }
+
+        .nav-links a:hover {
+            color: #00f01c;
+        }
+
+        .login-signup {
+            display: flex;
+            list-style: none;
+        }
+
+        .btn {
+            color: #fff;
+            background: linear-gradient(rgb(2, 10, 0),rgb(85, 254, 24));
+            padding: 0.5rem 1rem;
+            margin-left: 1rem;
+            text-decoration: none;
+            border-radius: 5px;
+            
+        }
+
+        .login-signup .btn:hover {
+            background-color: #00f01c;
+        }
+
+
+      
+
+          .btn-grad:hover {
+            background-position: right center; /* change the direction of the change here */
+            color: #fff;
+            text-decoration: none;
+          }
+         
+        .menu-icon{
+            font-size:24px; 
+            color: white;
+        }
+        .menu-icon button{
+            
+            background: linear-gradient(to right, #02AAB0 0%, #00CDAC  51%, #02AAB0  100%);
+            padding: 0.6rem 2rem ;
+            text-align: center;
+            transition: 0.5s;
+            background-size: 200% auto;
+            color: white;            
+            box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+            border: none;
+            border-radius: 2.5rem;
+            font-size: 20px;
+        }
+                 
+        
+
+          .btn-grad:hover {
+            background-position: right center; /* change the direction of the change here */
+            color: #fff;
+            text-decoration: none;
+          }
+         
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: right;
+            align-items: flex-start;
+            padding-top: 80px;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+        }
+
+        .modal-content a {
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #333;
+            color: white;
+            border-radius: 5px;
+        }
+
+        .modal-content a i {
+            margin-right: 10px; /* Adds space between the icon and text */
+        }
+
+        .modal-content li {
+            padding-left: 20px;
+        }
+        .logo img {
+            width: 150px; /* Set the width to your desired size */
+            height: auto; /* Maintain the aspect ratio */
+            max-height: 50px; /* Optional: limit the height */
+        }
+        
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .navbar {
+                flex-direction: column;
+            }
+
+            .navbar .logo {
+                margin-bottom: 1rem;
+            }
+
+            .login-signup {
+                margin-top: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="logo">
+            {% if company_settings.logo.url %}
+            <a href="https://mumbaicodingclub.com/"><img src="{{ company_settings.logo.url }}"></a>
+            {% else %}
+            <a href="">Mumbai Coding Club</a>
+            {% endif %}
+            
+        </div>
+        <ul class="nav-links">
+            <li><a href="">Home</a></li>
+            <li><a href="">About</a></li>
+            <li><a href="">Service</a></li>
+            <li><a href="">Contact</a></li>
+        </ul>
+        {% if not request.user.is_authenticated %}
+        <div class="logo-signup">
+            <a href="{% url 'login' %}" class="btn">Login</a>
+        </div>
+        {% else %}
+        <div class="menu-icon">
+            
+            <i  onclick="openModal()"><button>{{ user }}</button></i>
+        </div>
+        {% endif %}
+    </div>
+
+    <div id="menuModal" class="modal">
+        <div class="modal-content">
+            <a href=""><i class="fa fa-gear" aria-hidden="true"></i>Settings</a>
+            <a href="{% url 'logout' %}"><i class="fa fa-sign-out" aria-hidden="true"></i>Logout</a>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('menuModal').style.display = 'flex';
+        }
+        function closeModal() {
+            document.getElementById('menuModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById('menuModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

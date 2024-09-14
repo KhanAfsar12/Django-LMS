@@ -8,17 +8,14 @@
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
 
     <style>
         body {
             font-family: 'Arial', sans-serif;
             background-color: #f8f9fa;
             color: #333;
-        }
-
-        .nav{
-            margin-left: 1200px;
-            margin-top: 20px;
         }
 
         .container {
@@ -29,167 +26,228 @@
             color: #343a40;
         }
 
-        .card {
-            transition: transform 0.3s, box-shadow 0.3s;
-            border: none;
-            border-radius: 10px;
-        }
-
         .card:hover {
             transform: translateY(-10px);
             box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .card-title {
-            color: #007bff;
-            font-weight: bold;
-            font-size: 1.5rem;
+        .video-container {
+            display: flex;
+            margin-top: 1rem;
         }
 
-        .card-text {
-            font-size: 1rem;
-            line-height: 1.5;
-            color: #555;
+        .video-list {
+            flex: 1;
+            max-width: 40%; /* Adjust to control the width of the list */
+            padding-right: 20px;
+            border-right: 1px solid #ddd;
+            max-height: 400px;
+            overflow-y: scroll;
         }
 
-        .card-body ul {
-            padding-left: 0;
-            list-style: none;
+        ::-webkit-scrollbar {
+            width: 0;
+            display: none;
         }
 
-        .card-body ul li {
-            padding: 8px 0;
-            font-size: 1rem;
+        .video-list ul {
+            margin-top: 20px;
         }
 
-        .card-body ul li a {
-            color: #007bff;
-            text-decoration: none;
+        .video-player {
+            flex: 2;
+            padding-left: 20px;
         }
 
-        .card-body ul li a:hover {
-            text-decoration: underline;
+        .video-player video {
+            width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
         }
 
-        .modal-dialog {
-            max-width: 90%;
+        .tabs-section {
+            margin-top: 20px;
         }
 
-        .modal-content {
-            border-radius: 10px;
+        .nav-tabs .nav-link {
+            padding: 10px 15px;
         }
 
-        .modal-header {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .modal-footer {
+        .tab-content {
+            padding: 20px;
+            border: 1px solid #ddd;
             border-top: none;
         }
 
-        .pdf-icon {
-            color: #e3342f;
-            margin-right: 8px;
+        @media (max-width: 768px) {
+            .video-container {
+                flex-direction: column;
+            }
+
+            .video-list {
+                max-width: 100%; /* Full width for mobile */
+                border-right: none;
+                padding-right: 0;
+                margin-bottom: 1rem;
+            }
+
+            .video-player {
+                padding-left: 0;
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="nav">
-        <a href="{% url 'logout' %}">Logout</a>
-    </div>
+    {% include 'nav.html' %}
+
     <div class="container">
         <h1>{{ course.title }}</h1>
-        <p>{{ course.description }}</p>
 
-        <h3>Topics:</h3>
+        <!-- Div to show all topic titles together -->
+        <div class="all-topics-titles mb-4">
+            <h3>All Topics:</h3>
+            <div>
+                {% for topic in course.topics.all %}
+                <a href="#{{ topic.id }}"><span class="badge badge-primary">{{ topic.title }}</span></a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <h3>Topics and Videos:</h3>
         <div class="row">
-            {% for topic in course.topics.all %}
             <div class="col-md-12">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ topic.title }}</h5>
-                        <p class="card-text">{{ topic.content }}</p>
-
+                <div class="video-container">
+                    <div class="video-list">
                         <ul>
-                            {% for video in topic.videos.all %}
+                            <!-- Loop through all topics and their videos -->
+                            {% for topic in course.topics.all %}
                             <li>
-                                <a href="#" data-toggle="modal" data-target="#videoModal" data-video-url="{{ video.video_file.url }}">
-                                    <i class="fas fa-play-circle"></i> {{ video.title }}
-                                </a>
+                                <hr>
+                                <strong id="{{ topic.id }}">{{ topic.title }}</strong>
+                                <ul>
+                                    {% for video in topic.videos.all %}
+                                    <li>
+                                        <a href="#" class="video-link" data-video-url="{{ video.video_file.url }}" data-topic-id="{{ topic.id }}">
+                                            <i class="fas fa-play-circle" style="color: black;"></i> {{ video.title }}
+                                        </a>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
                             </li>
                             {% endfor %}
                         </ul>
-                        {% for pdf in topic.pdfs.all %}
-                        {% if pdf.pdf_file %}
-                        <p>
-                            <a href="{{ pdf.pdf_file.url }}" target="_blank">
-                                <i class="fas fa-file-pdf pdf-icon"></i>{{ pdf.title }}
-                            </a>
-                        </p>
-                        {% endif %}
-                        {% endfor %}
-
-                        {% for exam in topic.exams.all %}
-                        {% if exam %}
-                        <p>
-                            <a href="{% url 'exam_detail' exam.id %}">
-                                <i class="fas fa-book exam-icon"></i>{{ exam.title }}
-                            </a>
-                        </p>
-                        {% else %}
-                            <h3>Exam is not available</h3>
-                        {% endif %}
-                        {% endfor %}
                     </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
 
-    <!-- Video Modal -->
-    <div class="modal fade" id="videoModal" tabindex="-1" role="dialog" aria-labelledby="videoModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="videoModalLabel">Video</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <video id="videoPlayer" controls style="width: 100%;">
-                        <source id="videoSource" src="" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <!-- Video player on the right -->
+                    <div class="video-player">
+                        <video id="mainVideoPlayer" controls>
+                            <source id="mainVideoSource" src="" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+
+                        <!-- Tabs section for Q&A, Notes, Reviews, etc. -->
+                        <div class="tabs-section">
+                            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" id="overview-tab" data-toggle="tab" href="#overview" role="tab" aria-controls="overview" aria-selected="true">Overview</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="qa-tab" data-toggle="tab" href="#qa" role="tab" aria-controls="qa" aria-selected="false">Q&A</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="notes-tab" data-toggle="tab" href="#notes" role="tab" aria-controls="notes" aria-selected="false">Notes</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="reviews-tab" data-toggle="tab" href="#reviews" role="tab" aria-controls="reviews" aria-selected="false">Reviews</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" id="announcement-tab" data-toggle="tab" href="#announcement" role="tab" aria-controls="announcement" aria-selected="false">Announcements</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="myTabContent">
+                                <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+                                    <h5>Course Overview</h5>
+                                    <p>Details about the course content and goals.</p>
+                                </div>
+                                <div class="tab-pane fade" id="qa" role="tabpanel" aria-labelledby="qa-tab">
+                                    {% for topic in course.topics.all %}
+                                    {% for exam in topic.exams.all %}
+                                    {% if exam %}
+                                    <p>
+                                        <a href="{% url 'exam_detail' exam.id %}">
+                                            <i class="fas fa-book exam-icon"></i>{{ exam.title }}
+                                        </a>
+                                    </p>
+                                    {% else %}
+                                        <h3>Exam is not available</h3>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% endfor %}
+                                </div>
+
+
+                                <div class="tab-pane fade" id="notes" role="tabpanel" aria-labelledby="notes-tab">
+                                    {% for topic in course.topics.all %}
+                                    <i class="fa-solid fa-star" style="background: linear-gradient(white, rgb(251, 219, 219)); color: silver"></i>{{ topic.title }}
+                                    {% for pdf in topic.pdfs.all %}
+                                    {% if pdf.pdf_file %}
+                                    <p>
+                                        <a href="{{ pdf.pdf_file.url }}" target="_blank">
+                                            <i class="fas fa-file-pdf pdf-icon" style="color: red; padding: 5px;"></i>{{ pdf.title }}
+                                        </a>
+                                    </p>
+                                    {% endif %}
+                                    {% endfor %}
+                                    {% endfor %}
+                                </div>
+                                <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
+                                    <h5>Reviews</h5>
+                                    <p>Feedback and reviews from students.</p>
+                                </div>
+                                <div class="tab-pane fade" id="announcement" role="tabpanel" aria-labelledby="announcement-tab">
+                                    <h5>Announcements</h5>
+                                    <p>Important updates or announcements regarding the course.</p>
+                                </div>
+                            </div>
+                        </div> <!-- End of tabs section -->
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-    <!-- Custom JS to handle video modal -->
+    <!-- Custom JS to handle video loading -->
     <script>
-        $(document).ready(function() {
-            $('#videoModal').on('show.bs.modal', function(event) {
-                var link = $(event.relatedTarget);
-                var videoUrl = link.data('video-url');
+        $(document).ready(function () {
+            // Load the last viewed video from localStorage if available
+            var lastViewedVideo = localStorage.getItem('lastViewedVideo');
+            if (lastViewedVideo) {
+                $('#mainVideoSource').attr('src', lastViewedVideo);
+                $('#mainVideoPlayer')[0].load();
+            }
 
-                var modal = $(this);
-                modal.find('#videoSource').attr('src', videoUrl);
-                modal.find('#videoPlayer')[0].load();
+            // Event listener for video link clicks
+            $('.video-link').on('click', function (e) {
+                e.preventDefault();
+                var videoUrl = $(this).data('video-url');
+
+                // Update the main video player
+                $('#mainVideoSource').attr('src', videoUrl);
+                $('#mainVideoPlayer')[0].load();
+
+                // Save the last viewed video URL in localStorage
+                localStorage.setItem('lastViewedVideo', videoUrl);
             });
         });
     </script>
+    {% include 'footer.html' %}
+
 </body>
 
 </html>

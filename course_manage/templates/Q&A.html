@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ exam.title }}</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+
+        .exam-header {
+            background: linear-gradient(to right, #02AAB0, #00CDAC);
+            color: #fff;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .exam-header h1 {
+            font-size: 2.5rem;
+        }
+
+        .exam-header h4 {
+            font-size: 1.5rem;
+            color: #e0e0e0;
+        }
+
+        .exam-header p.exam-info {
+            font-size: 1.2rem;
+            color: #c7c7c7;
+        }
+
+        .question-card {
+            background-color: #fff;
+            border: 0px solid #ddd;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-card b {
+            color: #007bff;
+            font-size: 1.1rem;
+        }
+
+        .question-card label {
+            font-size: 1rem;
+            display: block;
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #02AAB0, #00CDAC);
+            border: none;
+            padding: 0.7rem 1.5rem;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            transition: background 0.4s ease;
+        }
+
+        .btn-primary:hover {
+            background-position: right center;
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-primary:focus {
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="exam-header text-center shadow">
+            <h1>{{ exam.title }}</h1>
+            <h4>{{ exam.start_date }} - {{ exam.end_date }}</h4>
+            <p class="exam-info">{{ exam.course }}</p>
+            <h5>{{ exam.description }}</h5>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <form method="POST">
+            {% csrf_token %}
+            {% for question, form in question_form_pairs %}
+            <div class="question-card mb-4 shadow-sm">
+                <b>Question:</b> <label>{{ question.text | safe }}</label>
+                {% if question.is_multiple_choice %}
+                    <div>{{ form.selected_choice }}</div>
+                {% else %}
+                    <div>{{ form.text }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary">Submit Answers</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+    

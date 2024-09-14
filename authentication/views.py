@@ -88,7 +88,7 @@ def resetPassword(request):
             if password1 != password2:
                 return HttpResponse('Password must be same')
             
-            username = request.session.get('user') # Only user name will be stored in user variable
+            username = request.session.get('user') 
             if not username:
                 return redirect('user_forget')
             
