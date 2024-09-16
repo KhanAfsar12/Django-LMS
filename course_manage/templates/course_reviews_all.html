@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Reviews</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        /* Container for review list */
+        .scrollable-container {
+            max-height: 500px; /* Adjust the height as needed */
+            overflow: auto; /* Allows scrolling */
+            padding-right: 15px; /* Space for scrollbar */
+            position: relative;
+            border: 1px solid #ddd; /* Optional: border for visual separation */
+            border-radius: 8px; /* Optional: rounded corners */
+            background-color: #f9f9f9; /* Optional: background color */
+        }
+
+        /* Hide scrollbars but keep scrolling functionality */
+        .scrollable-container::-webkit-scrollbar {
+            width: 0px; /* Hide the scrollbar in WebKit browsers */
+        }
+
+        .scrollable-container {
+            -ms-overflow-style: none; /* Hide scrollbar in IE and Edge */
+            scrollbar-width: none; /* Hide scrollbar in Firefox */
+        }
+
+        /* Star rating styles */
+        .star-rating .fa {
+            font-size: 1.5rem;
+            color: #ddd;
+        }
+
+        .star-rating .fa.checked {
+            color: #ffc107;
+        }
+
+        /* Review item styling */
+        .list-group-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd; /* Border between reviews */
+        }
+
+        .list-group-item:last-child {
+            border-bottom: none; /* Remove border for the last item */
+        }
+
+        /* Optional: spacing between stars and review text */
+        .star-rating {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3>Reviews</h3>
+        <div class="scrollable-container list-group mb-4">
+            {% for review in reviews %}
+                <div class="list-group-item">
+                    <h5>{{ review.user.username }} <small>({{ review.created_at|date:"F j, Y, g:i a" }})</small></h5>
+                    <p>{{ review.review_text }}</p>
+
+                    <div class="star-rating">
+                        {% for i in "12345" %}
+                            <span class="fa fa-star{% if review.rating >= forloop.counter %} checked{% endif %}"></span>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% empty %}
+                <p>No reviews yet. Be the first to leave a review!</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

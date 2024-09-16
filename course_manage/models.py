@@ -91,3 +91,15 @@ class CompanySettings(models.Model):
 
     def __str__(self):
         return "Company Settings"
+    
+
+
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    rating = models.PositiveSmallIntegerField()  # For ratings between 1-5
+    review_text = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Review by {self.user.username} for {self.course.title}"

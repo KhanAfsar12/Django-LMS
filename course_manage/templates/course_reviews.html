@@ -1,0 +1,140 @@
+<div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab"></div>
+<h5>{{ course.title }}</h5>
+<h5>{{ review.user.username }}</h5>
+<p>Feedback and reviews from students.</p>
+
+<div class="review-form">
+    <form method="POST" action="{% url 'course_reviews' course.id %}">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="rating">Rate this course:</label>
+            <div class="star-rating">
+                <span class="fa fa-star" data-rating="1"></span>
+                <span class="fa fa-star" data-rating="2"></span>
+                <span class="fa fa-star" data-rating="3"></span>
+                <span class="fa fa-star" data-rating="4"></span>
+                <span class="fa fa-star" data-rating="5"></span>
+                <input type="hidden" name="rating" id="rating-value" value="0">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="review-text">Write your review:</label>
+            <div class="d-flex align-items-center">
+                <textarea class="form-control" id="review-text" name="review_text" rows="2" placeholder="Share your experience..." style="flex: 1;"></textarea>
+                <button type="submit" class="btn btn-primary ml-2">
+                    <i class="fa fa-paper-plane"></i> Submit
+                </button>
+            </div>
+        </div>
+        
+    </form>
+</div>
+
+
+<!-- Include jQuery and FontAwesome for the star rating -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+
+<style>
+    .star-rating .fa {
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #ddd;
+    }
+
+    .star-rating .fa:hover, 
+    .star-rating .fa.selected {
+        color: #ffc107;
+    }
+
+    .review {
+        border-bottom: 1px solid #ddd;
+        padding: 10px 0;
+    }
+
+    .checked {
+        color: #ffc107;
+    }
+
+    .reviews-list .review strong {
+        font-size: 1rem;
+        color: #333;
+    }
+
+    .reviews-list .review p {
+        margin: 5px 0;
+    }
+
+    .btn-primary {
+        padding: 8px 12px; /* Adjust button size */
+        font-size: 1.2rem; /* Adjust button font size */
+    }
+
+    .btn-primary i {
+        margin-right: 5px; /* Space between icon and text */
+    }
+
+    .d-flex {
+        display: flex;
+    }
+
+    .align-items-center {
+        align-items: center;
+    }
+
+    .form-control {
+        resize: none; /* Prevent textarea resizing */
+    }
+
+    .ml-2 {
+        margin-left: 10px; /* Space between textarea and button */
+    }
+</style>
+
+<script>
+    $(document).ready(function() {
+        var selectedRating = 0;
+
+        // Handle star rating click
+        $('.star-rating .fa').on('click', function() {
+            var rating = $(this).data('rating');
+            selectedRating = rating;
+
+            $('#rating-value').val(rating);
+
+            // Highlight selected stars
+            $('.star-rating .fa').each(function() {
+                if ($(this).data('rating') <= rating) {
+                    $(this).addClass('selected');
+                } else {
+                    $(this).removeClass('selected');
+                }
+            });
+        });
+
+        // Handle form submission via AJAX
+        $('#review-form').on('submit', function(e) {
+            e.preventDefault();  // Prevent default form submission
+
+            var formData = $(this).serialize(); // Get form data
+
+            $.ajax({
+                url: $(this).attr('action'), // Form action URL
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    // Handle success - e.g., show a success message or update the reviews section
+                    alert('Your review has been submitted!');
+                    $('#review-form')[0].reset();  // Reset the form
+                    $('.fa.selected').removeClass('selected');  // Reset the star rating
+                },
+                error: function(xhr, status, error) {
+                    // Handle error - show an error message
+                    alert('Something went wrong. Please try again.');
+                }
+            });
+        });
+    });
+</script>

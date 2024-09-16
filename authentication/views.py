@@ -38,7 +38,7 @@ def user_login(request):
                 login(request, user)
                 return redirect('viewCourse')
             else:
-                return HttpResponse("Invalid credentials !")
+                messages.warning(request, 'You need to create your account')
     else:
         form = LoginForm()
     return render(request, 'login.html', {'form': form})
