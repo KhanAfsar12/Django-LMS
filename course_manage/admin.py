@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CompanySettings, Course, Topic, Video, PDF, Exam, Question, Answer, Choice
+from .models import CompanySettings, Course, Review, Topic, Video, PDF, Exam, Question, Answer, Choice
 # Register your models here.
 
 class CourseAdmin(admin.ModelAdmin):
@@ -43,3 +43,6 @@ admin.site.register(Choice)
 @admin.register(CompanySettings)
 class CompanySettingsAdmin(admin.ModelAdmin):
     list_display = ['logo']
+
+
+admin.site.register(Review)

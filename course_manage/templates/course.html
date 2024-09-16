@@ -333,17 +333,32 @@
             const videoPlayer = document.getElementById('mainVideoPlayer');
             const videoSource = document.getElementById('mainVideoSource');
         
-            // Check if a video URL was previously saved
-            const savedVideoUrl = localStorage.getItem('savedVideoUrl');
+            // Unique identifier for the current course (can use course ID or title)
+            const courseId = '{{ course.id }}'; // Assuming you're passing the course ID in the context
+        
+            // Key for localStorage
+            const videoStorageKey = `savedVideoUrl_${courseId}`;
+        
+            // Check if a video URL was previously saved for this course
+            const savedVideoUrl = localStorage.getItem(videoStorageKey);
             if (savedVideoUrl) {
                 videoSource.setAttribute('src', savedVideoUrl);
                 videoPlayer.load();
             }
         
-            // Save the current video URL when a new one is played
-            videoPlayer.addEventListener('play', function () {
-                const currentVideoUrl = videoSource.getAttribute('src');
-                localStorage.setItem('savedVideoUrl', currentVideoUrl);
+            // Add event listeners to all video links
+            const videoLinks = document.querySelectorAll('.video-link');
+            videoLinks.forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const videoUrl = this.getAttribute('data-video-url');
+                    videoSource.setAttribute('src', videoUrl);
+                    videoPlayer.load();
+                    videoPlayer.play();
+        
+                    // Save the current video URL for this course in localStorage
+                    localStorage.setItem(videoStorageKey, videoUrl);
+                });
             });
         });
         
