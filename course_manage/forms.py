@@ -1,5 +1,5 @@
 from django import forms
-from .models import Answer, Choice
+from .models import Answer, Choice, Review
 
 class AnswerForm(forms.ModelForm):
     selected_choice = forms.ModelChoiceField(
@@ -24,3 +24,14 @@ class AnswerForm(forms.ModelForm):
             else:
                 self.fields['selected_choice'].widget = forms.HiddenInput()
                 self.fields['text'].required = True
+
+
+
+class ReviewForm(forms.ModelForm):
+    class Meta:
+        model = Review
+        fields = ["rating", "review_text"]
+        widgets = {
+            "rating": forms.HiddenInput(),
+            'review_text': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Share your experience...'}),
+        }

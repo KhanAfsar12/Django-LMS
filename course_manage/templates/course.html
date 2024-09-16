@@ -10,7 +10,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-
     <style>
         body {
             font-family: 'Arial', sans-serif;
@@ -18,17 +17,46 @@
             color: #333;
         }
 
-        .container {
-            padding-top: 2rem;
+        .row {
+            margin-top: -70px;
         }
 
-        h1 {
+        /* Navbar styling */
+        .navbar {
+            margin-bottom: 0; /* Remove bottom margin to make container start right below the navbar */
+        }
+
+        /* Container adjustments */
+        .container {
+            padding-top: 0rem; /* Ensure there's no extra padding on top */
+            padding-bottom: 2rem; /* Add padding to the bottom */
+        }
+        
+        .course-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+
+        }
+
+        .course-title {
             color: #343a40;
         }
 
-        .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+        .all-topics-titles {
+            white-space: nowrap; /* Prevents wrapping to the next line */
+            overflow-x: auto; /* Adds horizontal scroll if necessary */
+        }
+    
+        .all-topics-titles .badge {
+            display: inline-block; /* Ensures badges are inline */
+            margin-right: 10px; /* Adds spacing between badges */
+            font-size: 14px; /* Adjust font size as needed */
+        }
+    
+        .all-topics-titles .badge:last-child {
+            margin-right: 0; /* Removes margin from the last badge */
         }
 
         .video-container {
@@ -41,7 +69,7 @@
             max-width: 40%; /* Adjust to control the width of the list */
             padding-right: 20px;
             border-right: 1px solid #ddd;
-            max-height: 400px;
+            max-height: 600px;
             overflow-y: scroll;
         }
 
@@ -57,6 +85,7 @@
         .video-player {
             flex: 2;
             padding-left: 20px;
+            margin-top: 20px;
         }
 
         .video-player video {
@@ -79,6 +108,35 @@
             border-top: none;
         }
 
+        .course-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        .course-title {
+            color: #343a40;
+        }
+        
+        .all-topics-titles {
+            white-space: nowrap; /* Prevents wrapping to the next line */
+            overflow-x: auto; /* Adds horizontal scroll if necessary */
+        }
+        
+        .all-topics-titles .badge {
+            display: inline-block; /* Ensures badges are inline */
+            margin-right: 10px; /* Adds spacing between badges */
+            font-size: 14px; /* Adjust font size as needed */
+        }
+        
+        .all-topics-titles .badge:last-child {
+            margin-right: 0; /* Removes margin from the last badge */
+        }
+        
+        hr{
+            margin-top: 40px;
+        }
         @media (max-width: 768px) {
             .video-container {
                 flex-direction: column;
@@ -101,20 +159,30 @@
 <body>
     {% include 'nav.html' %}
 
-    <div class="container">
-        <h1>{{ course.title }}</h1>
-
-        <!-- Div to show all topic titles together -->
-        <div class="all-topics-titles mb-4">
-            <h3>All Topics:</h3>
-            <div>
-                {% for topic in course.topics.all %}
-                <a href="#{{ topic.id }}"><span class="badge badge-primary">{{ topic.title }}</span></a>
+    <div class="container mt-5">
+        <div id="messages" class="messages">
+            {% if messages %}
+                {% for message in messages %}
+                <div id="message_{{ message.id }}" class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
                 {% endfor %}
+            {% endif %}
+        </div>
+
+        <div class="course-header">
+            <h1 class="course-title" style="margin-top: -60px;">{{ course.title }}</h1>
+
+            <!-- Div to show all topic titles together -->
+            <div class="all-topics-titles mb-4">
+                <div>
+                    {% for topic in course.topics.all %}
+                    <a href="#{{ topic.id }}"><span class="badge badge-primary" style="margin-bottom: 30px;">{{ topic.title }}</span></a>
+                    {% endfor %}
+                </div>
             </div>
         </div>
 
-        <h3>Topics and Videos:</h3>
         <div class="row">
             <div class="col-md-12">
                 <div class="video-container">
@@ -170,6 +238,8 @@
                                     <h5>Course Overview</h5>
                                     <p>Details about the course content and goals.</p>
                                 </div>
+
+                                <!-- Course Exam -->
                                 <div class="tab-pane fade" id="qa" role="tabpanel" aria-labelledby="qa-tab">
                                     {% for topic in course.topics.all %}
                                     {% for exam in topic.exams.all %}
@@ -186,7 +256,7 @@
                                     {% endfor %}
                                 </div>
 
-
+                                <!-- Course PDF -->
                                 <div class="tab-pane fade" id="notes" role="tabpanel" aria-labelledby="notes-tab">
                                     {% for topic in course.topics.all %}
                                     <i class="fa-solid fa-star" style="background: linear-gradient(white, rgb(251, 219, 219)); color: silver"></i>{{ topic.title }}
@@ -201,9 +271,11 @@
                                     {% endfor %}
                                     {% endfor %}
                                 </div>
+
+                                <!-- Review -->
                                 <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
-                                    <h5>Reviews</h5>
-                                    <p>Feedback and reviews from students.</p>
+                                    {% include 'course_reviews.html' %}
+                                    {% include 'course_reviews_all.html' %}
                                 </div>
                                 <div class="tab-pane fade" id="announcement" role="tabpanel" aria-labelledby="announcement-tab">
                                     <h5>Announcements</h5>
@@ -216,38 +288,66 @@
             </div>
         </div>
     </div>
+    {% include 'footer.html' %}
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-    <!-- Custom JS to handle video loading -->
     <script>
-        $(document).ready(function () {
-            // Load the last viewed video from localStorage if available
-            var lastViewedVideo = localStorage.getItem('lastViewedVideo');
-            if (lastViewedVideo) {
-                $('#mainVideoSource').attr('src', lastViewedVideo);
-                $('#mainVideoPlayer')[0].load();
-            }
+        document.addEventListener('DOMContentLoaded', function () {
+            const videoLinks = document.querySelectorAll('.video-link');
+            const videoPlayer = document.getElementById('mainVideoPlayer');
+            const videoSource = document.getElementById('mainVideoSource');
 
-            // Event listener for video link clicks
-            $('.video-link').on('click', function (e) {
-                e.preventDefault();
-                var videoUrl = $(this).data('video-url');
-
-                // Update the main video player
-                $('#mainVideoSource').attr('src', videoUrl);
-                $('#mainVideoPlayer')[0].load();
-
-                // Save the last viewed video URL in localStorage
-                localStorage.setItem('lastViewedVideo', videoUrl);
+            videoLinks.forEach(link => {
+                link.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    const videoUrl = this.getAttribute('data-video-url');
+                    videoSource.setAttribute('src', videoUrl);
+                    videoPlayer.load();
+                    videoPlayer.play();
+                });
             });
         });
     </script>
-    {% include 'footer.html' %}
 
+
+    <script>
+        // Automatically remove messages after 2 seconds
+        setTimeout(function() {
+            var messagesContainer = document.getElementById('messages');
+            if (messagesContainer) {
+                var messages = messagesContainer.getElementsByClassName('alert');
+                for (var i = 0; i < messages.length; i++) {
+                    var message = messages[i];
+                    message.remove();
+                }
+            }
+        }, 2000);
+    </script>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const videoPlayer = document.getElementById('mainVideoPlayer');
+            const videoSource = document.getElementById('mainVideoSource');
+        
+            // Check if a video URL was previously saved
+            const savedVideoUrl = localStorage.getItem('savedVideoUrl');
+            if (savedVideoUrl) {
+                videoSource.setAttribute('src', savedVideoUrl);
+                videoPlayer.load();
+            }
+        
+            // Save the current video URL when a new one is played
+            videoPlayer.addEventListener('play', function () {
+                const currentVideoUrl = videoSource.getAttribute('src');
+                localStorage.setItem('savedVideoUrl', currentVideoUrl);
+            });
+        });
+        
+    </script>
 </body>
 
 </html>

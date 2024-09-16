@@ -69,6 +69,19 @@
     </style>
 </head>
 <body>
+
+    <div id="messages" class="messages">
+        {% if messages %}
+            {% for message in messages %}
+            <div id="message_{{ message.id }}" class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+
+
     <div class="container">
         <h3>Registration Form</h3>
         <form action="" method="post">
@@ -78,5 +91,20 @@
             <a href="{% url 'login' %}">Login</a>
         </form>
     </div>
+
+
+    <script>
+        // Automatically remove messages after 2 seconds
+        setTimeout(function() {
+            var messagesContainer = document.getElementById('messages');
+            if (messagesContainer) {
+                var messages = messagesContainer.getElementsByClassName('alert');
+                for (var i = 0; i < messages.length; i++) {
+                    var message = messages[i];
+                    message.remove();
+                }
+            }
+        }, 2000);
+    </script>
 </body>
 </html>
