@@ -14,7 +14,7 @@
             background-color: #f8f9fa;
         }
 
-        .nav{
+        .nav {
             margin-left: 1200px;
             margin-top: 20px;
         }
@@ -40,7 +40,6 @@
             object-fit: cover;
             padding: 40px;
             border-radius: 50px;
-            
         }
 
         .card-body {
@@ -78,10 +77,48 @@
             background-color: transparent;
             border-top: none;
         }
+
+        /* Enroll Now Button Styles */
+        .enroll-btn {
+            background: linear-gradient(to right, #02AAB0 0%, #00CDAC  51%, #02AAB0  100%);
+            color: #fff; /* Text color */
+            border: none; /* Remove border */
+            padding: 10px 20px; /* Padding around the text */
+            border-radius: 5px; /* Rounded corners */
+            font-size: 16px; /* Font size */
+            font-weight: bold; /* Bold text */
+            cursor: pointer; /* Pointer cursor on hover */
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transition for hover effects */
+            margin-left: 180px;
+        }
+
+        .enroll-btn:hover {
+            background-color: #0056b3; /* Darker shade for hover */
+            transform: scale(1.05); /* Slightly enlarge the button on hover */
+        }
+
+        .enroll-btn:focus {
+            outline: none; /* Remove default focus outline */
+        }
+
+        .enroll-btn:active {
+            background-color: #004494; /* Even darker shade for click */
+        }
     </style>
 </head>
 <body>
     {% include 'nav.html' %}
+
+
+    <div id="messages" class="messages">
+        {% if messages %}
+            {% for message in messages %}
+            <div id="message_{{ message.id }}" class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        {% endif %}
+    </div>
  
     <div class="container mt-5">
         <div class="text-center mb-5">
@@ -108,6 +145,11 @@
                         <a href="{% url 'ParticularCourse' id=course.id %}">
                             <span class="read-more mt-auto">Read more</span>
                         </a>
+                        
+                        <a href="{% url 'enrollNow' course.id %}">
+                            <button class="enroll-btn">Enroll Now</button>
+                        </a>
+                      
                     </div>
                 </div>
             </div>
@@ -135,6 +177,20 @@
                 });
             });
         });
+    </script>
+
+    <script>
+        // Automatically remove messages after 2 seconds
+        setTimeout(function() {
+            var messagesContainer = document.getElementById('messages');
+            if (messagesContainer) {
+                var messages = messagesContainer.getElementsByClassName('alert');
+                for (var i = 0; i < messages.length; i++) {
+                    var message = messages[i];
+                    message.remove();
+                }
+            }
+        }, 2000);
     </script>
     {% include 'footer.html' %}
 </body>

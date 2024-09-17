@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import CompanySettings, Course, Review, Topic, Video, PDF, Exam, Question, Answer, Choice
+from .models import Announcement, CompanySettings, Course, Enrollment, ExamResult, Review, Topic, Video, PDF, Exam, Question, Answer, Choice
 # Register your models here.
 
 class CourseAdmin(admin.ModelAdmin):
@@ -46,3 +46,11 @@ class CompanySettingsAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Review)
+
+
+admin.site.register(Announcement)
+
+
+admin.site.register(Enrollment)
+
+admin.site.register(ExamResult)

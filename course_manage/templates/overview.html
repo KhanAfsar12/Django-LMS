@@ -1,0 +1,106 @@
+<article class="course-details">
+    <header class="course-header">
+        <h2 class="course-title">{{ course.title }}</h2>
+    </header>
+
+    <section class="course-description">
+        <p>{{ course.description }}</p>
+    </section>
+
+    <section class="course-info">
+        <div class="info-item">
+            <h3>Credits:</h3>
+            <p>{{ course.credits }}</p>
+        </div>
+        <div class="info-item">
+            <h3>Duration:</h3>
+            <p>{{ course.start_date }} - {{ course.end_date }}</p>
+        </div>
+    </section>
+
+    <footer class="course-footer">
+        <h4>Created by: {{ course.created_by }}</h4>
+    </footer>
+</article>
+
+
+<style>
+    /* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+}
+
+/* Course Details Article */
+.course-details {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Header */
+.course-header {
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.course-title {
+    font-size: 2rem;
+    color: #333;
+    margin: 0;
+}
+
+/* Description */
+.course-description {
+    margin-bottom: 20px;
+}
+
+.course-description p {
+    font-size: 1rem;
+    color: #666;
+    line-height: 1.6;
+}
+
+/* Info Section */
+.course-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.info-item {
+    flex: 1;
+    padding: 0 10px;
+}
+
+.info-item h3 {
+    font-size: 1.2rem;
+    color: #333;
+    margin: 0 0 5px;
+}
+
+.info-item p {
+    font-size: 1rem;
+    color: #555;
+}
+
+/* Footer */
+.course-footer {
+    border-top: 2px solid #e0e0e0;
+    padding-top: 10px;
+    text-align: center;
+}
+
+.course-footer h4 {
+    font-size: 1rem;
+    color: #333;
+    margin: 0;
+}
+
+</style>

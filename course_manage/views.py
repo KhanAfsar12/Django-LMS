@@ -1,18 +1,28 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.forms import modelformset_factory
-from .forms import AnswerForm, ReviewForm
-from .models import Answer, CompanySettings, Course, Exam, Question, Review, Topic,  Video
+from .forms import AnswerForm, EnrollNowForm, ReviewForm
+from .models import Announcement, Answer, CompanySettings, Course, Enrollment, Exam, ExamResult, Question, Review, Topic,  Video
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 # Create your views here.
+
+
 
 def viewCourse(request):
     courses = Course.objects.all()
     user = request.user
     company_settings = CompanySettings.objects.first()
-    print(company_settings)
-    return render(request, 'courses.html', {'courses': courses, 'user':user, 'company_settings':company_settings})
+
+    enrolled_status = list()
+    enrolled_dic= {}
+    for course in courses:
+        is_enrolled = Enrollment.objects.filter(user=user, course=course).exists()
+        enrolled_dic[course.id] = is_enrolled 
+        enrolled_status.append(enrolled_dic[course.id])
+    print(enrolled_status)
+    return render(request, 'courses.html', {'courses': courses, 'user':user, 'company_settings':company_settings, 'enrolled_status': enrolled_status})
 
 
 def get_course_with_topics_and_videos(id):
@@ -22,18 +32,28 @@ def get_course_with_topics_and_videos(id):
 
     except Course.DoesNotExist:
         return None
+    
+def is_user_enrolled(user, course_id):
+    return Enrollment.objects.filter(user=user, course_id=course_id)
 
 def ParticularCourse(request, id):
     reviews = Review.objects.filter(course=id).order_by('-created_at')
     if not request.user.is_authenticated:
-        print(request.user)
         return redirect('login')
-    print(request.user)
+    
+    is_enrolled = is_user_enrolled(request.user, id)
+    print(is_enrolled)
+    
+    if not is_user_enrolled(request.user, id):
+        return redirect('enrollNow', course_id=id)
+    
     request.session['course_id'] = id
     course = get_course_with_topics_and_videos(id)
+
+    announcement = Announcement.objects.filter(id=id)
     company_settings = CompanySettings.objects.first()
     if course:
-        return render(request, 'course.html', {'course': course, 'reviews': reviews})
+        return render(request, 'course.html', {'course': course, 'reviews': reviews, 'announcement': announcement, 'is_enrolled': is_enrolled})
     else:
         return render(request, '404.html')
     
@@ -75,6 +95,7 @@ def exam_details(request, exam_id):
 
 
 
+
 @login_required
 def course_reviews(request, course_id):
     course = get_object_or_404(Course, id=course_id)
@@ -96,3 +117,40 @@ def course_reviews(request, course_id):
         'form': form,
     }
     return render(request, 'course_reviews.html', context)
+
+
+
+
+def enrollNow(request, course_id):
+    course = get_object_or_404(Course, id=course_id)
+    if not request.user.is_authenticated:
+        return redirect('login')
+    
+    if Enrollment.objects.filter(user=request.user, course=course).exists():
+        return render(request, 'enroll_course.html', {'course': course, 'already_enrolled': True,})
+
+    if request.method == 'POST':
+        form = EnrollNowForm(request.POST)
+        if form.is_valid():
+            enrollment = form.save(commit=False)
+            enrollment.user = request.user
+            enrollment.course = course
+            enrollment.save()
+            messages.success(request, "Enrollment is successful...")
+            return redirect('/')
+        else:
+            messages.warning(request, "Something went wrong")
+            return redirect('/')
+    else:
+        if not request.user.is_authenticated:
+            return redirect('login')
+        form = EnrollNowForm()
+    context = {
+        'user': request.user,
+        'course': course_id,
+        'form': form
+    }
+    return render(request, 'enroll_course.html', context)
+
+
+

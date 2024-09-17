@@ -29,7 +29,7 @@
         /* Container adjustments */
         .container {
             padding-top: 0rem; /* Ensure there's no extra padding on top */
-            padding-bottom: 2rem; /* Add padding to the bottom */
+            padding-bottom: 1rem; /* Add padding to the bottom */
         }
         
         .course-header {
@@ -177,7 +177,7 @@
             <div class="all-topics-titles mb-4">
                 <div>
                     {% for topic in course.topics.all %}
-                    <a href="#{{ topic.id }}"><span class="badge badge-primary" style="margin-bottom: 30px;">{{ topic.title }}</span></a>
+                    <a href="#{{ topic.id }}"><span class="badge badge-primary" style="margin-bottom: 30px; background: linear-gradient(to right, #02AAB0 0%, #00CDAC  51%, #02AAB0  100%);">{{ topic.title }}</span></a>
                     {% endfor %}
                 </div>
             </div>
@@ -234,9 +234,11 @@
                                 </li>
                             </ul>
                             <div class="tab-content" id="myTabContent">
+
+                                <!-- Course overview -->
                                 <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
-                                    <h5>Course Overview</h5>
-                                    <p>Details about the course content and goals.</p>
+                                    {% include 'overview.html' %}
+                                   
                                 </div>
 
                                 <!-- Course Exam -->
@@ -278,8 +280,7 @@
                                     {% include 'course_reviews_all.html' %}
                                 </div>
                                 <div class="tab-pane fade" id="announcement" role="tabpanel" aria-labelledby="announcement-tab">
-                                    <h5>Announcements</h5>
-                                    <p>Important updates or announcements regarding the course.</p>
+                                    {% include 'announcements.html' %}
                                 </div>
                             </div>
                         </div> <!-- End of tabs section -->

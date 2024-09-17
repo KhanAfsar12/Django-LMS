@@ -1,5 +1,5 @@
 from django import forms
-from .models import Answer, Choice, Review
+from .models import Answer, Choice, Enrollment, Review
 
 class AnswerForm(forms.ModelForm):
     selected_choice = forms.ModelChoiceField(
@@ -35,3 +35,10 @@ class ReviewForm(forms.ModelForm):
             "rating": forms.HiddenInput(),
             'review_text': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Share your experience...'}),
         }
+
+
+
+class EnrollNowForm(forms.ModelForm):
+    class Meta:
+        model = Enrollment
+        fields = []
