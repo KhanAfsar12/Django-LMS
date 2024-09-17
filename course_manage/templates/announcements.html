@@ -1,0 +1,49 @@
+<div class="announcements-container mt-4">
+
+    {% for announce in announcement %}
+    <div class="announcement-card mb-3 p-3 border rounded">
+        <div class="announcement-header d-flex justify-content-between align-items-center mb-2">
+            <h5 class="mb-0">{{ announce.user.username }}</h5>
+            <small class="text-muted">{{ announce.created_at|date:"F j, Y" }}</small>
+        </div>
+        <div class="announcement-body">
+            <p>{{ announce.message }}</p>
+        </div>
+    </div>
+    {% empty %}
+    <p class="text-center text-muted">No announcements at the moment.</p>
+    {% endfor %}
+</div>
+
+
+<style>
+    .announcements-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+    
+    .announcement-card {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .announcement-header {
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+    }
+    
+    .announcement-body {
+        font-size: 16px;
+    }
+    
+    .announcement-card h5 {
+        font-size: 18px;
+        font-weight: 500;
+    }
+    
+    .announcement-card small {
+        font-size: 14px;
+    }
+    
+</style>

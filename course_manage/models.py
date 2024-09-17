@@ -103,3 +103,37 @@ class Review(models.Model):
 
     def __str__(self):
         return f"Review by {self.user.username} for {self.course.title}"
+    
+
+
+
+class Announcement(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    message = models.TextField(blank=True, null=True)
+    
+    def __str__(self):
+        return f"Announcement by {self.user.username} for {self.course.title}"
+    
+
+
+
+class Enrollment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    progress = models.FloatField(default=0)  # Percentage of completion
+
+    def __str__(self):
+        return f"{self.user.username} - {self.course.title}"
+
+
+
+class ExamResult(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    exam = models.ForeignKey(Exam, on_delete=models.CASCADE)
+    score = models.FloatField()  # Score out of 100
+
+    def __str__(self):
+        return f"{self.user.username} - {self.exam.title} - {self.score}"
+
+
