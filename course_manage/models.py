@@ -2,13 +2,30 @@ from django.db import models
 from django.contrib.auth.models import User
 from ckeditor.fields import RichTextField
 # Create your models here.
+
+
+
+class CompanySettings(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='company_settings', null=True)
+    name = models.CharField(max_length=1000, null=True)
+    logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
+    powered_by = models.ImageField(upload_to='powered_by/', blank=True, null=True)
+    company_url = models.URLField(null=True, blank=True)
+    course_desc = models.CharField(max_length=1000, null=True)
+
+    def __str__(self):
+        return f"{self.name}"
+
+
 class Course(models.Model):
+    company_name = models.ForeignKey(CompanySettings, on_delete=models.CASCADE, related_name='courses', null=True)
     title = models.CharField(max_length=255)
     description = models.TextField()
     credits = models.IntegerField()
     start_date = models.DateField()
     end_date = models.DateField()
     course_image = models.ImageField(upload_to='course_image/', blank=True, null=True) 
+    created_at = models.DateTimeField(null=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -84,14 +101,7 @@ class Answer(models.Model):
 
 
 
-class CompanySettings(models.Model):
-    logo = models.ImageField(upload_to='company_logos/', blank=True, null=True)
-    powered_by = models.ImageField(upload_to='powered_by/', blank=True, null=True)
-    company_url = models.URLField(null=True, blank=True)
 
-    def __str__(self):
-        return "Company Settings"
-    
 
 
 class Review(models.Model):
@@ -119,8 +129,8 @@ class Announcement(models.Model):
 
 
 class Enrollment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='enrollments')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrollments')
     progress = models.FloatField(default=0)  # Percentage of completion
 
     def __str__(self):
