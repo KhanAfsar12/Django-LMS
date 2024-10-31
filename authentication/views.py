@@ -47,13 +47,12 @@ def user_login(request):
 @csrf_exempt
 @require_POST
 def user_logout(request):
-    logout(request)
-    print("Afsar")
-    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        return JsonResponse({'message': 'Successfully logged out'})
+    if request.user.is_authenticated:    
+        logout(request)
+        return JsonResponse({'message': 'Successfully logged out'}, status=200)
+    else:
+        return JsonResponse({'message': 'Successfully logged out'}, status=400)
     
-    return redirect('login')
-
 
 
 def user_forget(request):
