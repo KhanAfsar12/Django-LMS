@@ -11,21 +11,38 @@ from django.contrib.auth.models import User
 
 
 def viewCourse(request):
-    courses = Course.objects.all()
     user = request.user
     print(user)
-    company_settings = CompanySettings.objects.first()
 
-    enrolled_status = list()
-    enrolled_dic= {}
-    for course in courses:
-        if user == "AnonymousUser" or request.user.is_authenticated:
-            is_enrolled = Enrollment.objects.filter(user=user, course=course).exists()
-            enrolled_dic[course.id] = is_enrolled 
-            enrolled_status.append(enrolled_dic[course.id])
-    print(enrolled_status)
+    # Get the company settings for the user
+    company_settings = CompanySettings.objects.filter(owner=user)
+    print(company_settings)
 
-    return render(request, 'courses.html', {'courses': courses, 'user':user, 'company_settings':company_settings, 'enrolled_status': enrolled_status})
+    # Get courses associated with the user's company settings
+    courses = Course.objects.filter(company_name__in=company_settings)
+    print(courses)
+
+    # Prepare dictionary to store enrollment status for each course
+    enrolled_dic = {course.title: Enrollment.objects.filter(user=user, course=course).exists() for course in courses}
+    lst = []
+    for key, value in enrolled_dic.items():
+        lst.append(value)
+    print(lst)
+        
+
+    print("Enrolled Dictionary:", enrolled_dic)
+
+    # Prefetch enrollments for the user
+    user_with_enrollments = User.objects.prefetch_related('enrollments').get(id=user.id)
+    print(user_with_enrollments)
+
+    return render(request, 'courses.html', {
+        'courses': courses, 
+        'user': user, 
+        'company_settings': company_settings, 
+        'enrolled_dic': lst,
+    })
+
 
 
 
@@ -47,7 +64,6 @@ def ParticularCourse(request, id):
         return redirect('login')
     
     is_enrolled = is_user_enrolled(request.user, id)
-    print(is_enrolled)
     
     if not is_user_enrolled(request.user, id):
         return redirect('enrollNow', course_id=id)

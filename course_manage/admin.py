@@ -42,7 +42,7 @@ admin.site.register(Choice)
 
 @admin.register(CompanySettings)
 class CompanySettingsAdmin(admin.ModelAdmin):
-    list_display = ['logo']
+    list_display = ['name','logo', 'powered_by', 'course_desc']
 
 
 admin.site.register(Review)

@@ -44,14 +44,16 @@ def user_login(request):
     return render(request, 'login.html', {'form': form})
 
 
-@csrf_exempt
-@require_POST
+
 def user_logout(request):
-    if request.user.is_authenticated:    
+    if request.user.is_authenticated: 
         logout(request)
-        return JsonResponse({'message': 'Successfully logged out'}, status=200)
+        messages.success(request, "You are successfully logged out")
+        return redirect('login')
     else:
-        return JsonResponse({'message': 'Successfully logged out'}, status=400)
+        messages.warning("You may need to login")
+    return redirect('login')
+        
     
 
 

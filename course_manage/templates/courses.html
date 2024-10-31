@@ -123,7 +123,9 @@
     <div class="container mt-5">
         <div class="text-center mb-5">
             <h1 class="display-4">Our Courses</h1>
-            <p class="lead text-muted">Explore our wide range of courses designed to boost your career.</p>
+            {% for company_setting in company_settings %}
+            <p class="lead text-muted">{{ company_setting.course_desc }}</p>
+            {% endfor %}
         </div>
         
         <div class="row">
@@ -145,17 +147,15 @@
                         <a href="{% url 'ParticularCourse' id=course.id %}">
                             <span class="read-more mt-auto">Read more</span>
                         </a>
-                        
                         <a href="{% url 'enrollNow' course.id %}">
                             <button class="enroll-btn">Enroll Now</button>
                         </a>
-                      
                     </div>
                 </div>
             </div>
             {% endfor %}
         </div>
-    </div>
+        
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
