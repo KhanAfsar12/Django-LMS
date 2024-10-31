@@ -13,16 +13,21 @@ from django.contrib.auth.models import User
 def viewCourse(request):
     courses = Course.objects.all()
     user = request.user
+    print(user)
     company_settings = CompanySettings.objects.first()
 
     enrolled_status = list()
     enrolled_dic= {}
     for course in courses:
-        is_enrolled = Enrollment.objects.filter(user=user, course=course).exists()
-        enrolled_dic[course.id] = is_enrolled 
-        enrolled_status.append(enrolled_dic[course.id])
+        if user == "AnonymousUser" or request.user.is_authenticated:
+            is_enrolled = Enrollment.objects.filter(user=user, course=course).exists()
+            enrolled_dic[course.id] = is_enrolled 
+            enrolled_status.append(enrolled_dic[course.id])
     print(enrolled_status)
+
     return render(request, 'courses.html', {'courses': courses, 'user':user, 'company_settings':company_settings, 'enrolled_status': enrolled_status})
+
+
 
 
 def get_course_with_topics_and_videos(id):
