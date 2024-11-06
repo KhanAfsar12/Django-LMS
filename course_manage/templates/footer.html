@@ -1,35 +1,44 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body{
+        body {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         .footer {
             width: 100%;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
             background-color: #333;
             color: #fff;
-            padding: 1rem;
+            padding: 1.5rem;
             text-align: left;
+            flex-wrap: wrap;
         }
 
-        .footer .logo {
-            display: flex;
-            align-items: center;
+        .footer .logo-section, 
+        .footer .company-info, 
+        .footer .social-media, 
+        .footer .quick-links {
+            flex: 1;
+            margin: 0.5rem;
         }
 
         .footer .logo img {
             height: 40px; /* Adjust height as needed */
         }
 
-        .footer .company-info {
+        .footer .company-info, 
+        .footer .social-media, 
+        .footer .quick-links {
             display: flex;
             flex-direction: column;
             align-items: flex-start;
@@ -40,8 +49,21 @@
             font-weight: bold;
         }
 
+        .footer .social-media a, 
+        .footer .quick-links a {
+            color: #fff;
+            text-decoration: none;
+            margin: 0.3rem 0;
+        }
+
+        .footer .social-media a:hover, 
+        .footer .quick-links a:hover {
+            text-decoration: underline;
+        }
+
         .footer .copyright {
             font-size: 0.9rem;
+            margin-top: 1rem;
         }
 
         @media (max-width: 768px) {
@@ -49,10 +71,6 @@
                 flex-direction: column;
                 align-items: center;
                 text-align: center;
-            }
-
-            .footer .company-info {
-                margin-top: 1rem;
             }
 
             .footer .logo img {
@@ -63,15 +81,41 @@
 </head>
 <body>
     <div class="footer">
-        <div class="logo">
-            <img src="" alt="Leewayzon">
-        </div>
-        <div class="company-info">
-            <div class="company-name">
-                Powered By
+        <!-- Logo Section -->
+         {% for logo in company_settings %}
+        <div class="logo-section">
+            <div class="logo">
+                <img src="{{ logo.logo }}" alt="Leewayzon Logo">
             </div>
+            <div class="company-name">Powered By Leewayzon</div>
+        </div>
+        {% endfor %}
+
+        <!-- Quick Links Section -->
+        <div class="quick-links">
+            <strong>Quick Links</strong>
+            <a href="#">Home</a>
+            <a href="#">Courses</a>
+            <a href="#">About Us</a>
+            <a href="#">Contact</a>
+        </div>
+
+        <!-- Social Media Links Section -->
+        <div class="social-media">
+            <strong>Follow Us</strong>
+            <a href="#">Facebook</a>
+            <a href="#">Twitter</a>
+            <a href="#">Instagram</a>
+            <a href="#">LinkedIn</a>
+        </div>
+
+        <!-- Company Information Section -->
+        <div class="company-info">
+            <strong>Contact Us</strong>
+            <p>Email: info@leewayzon.com</p>
+            <p>Phone: +1 (123) 456-7890</p>
             <div class="copyright">
-                &copy; Apache Foundation . All rights reserved. 
+                &copy; Apache Foundation. All rights reserved.
             </div>
         </div>
     </div>
