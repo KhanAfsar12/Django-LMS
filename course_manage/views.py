@@ -10,37 +10,35 @@ from django.contrib.auth.models import User
 
 
 
+from django.contrib.auth.models import AnonymousUser
+from django.shortcuts import render
+
 def viewCourse(request):
     user = request.user
-    print(user)
+    courses = Course.objects.all()  # Fetch all courses for anonymous users
 
-    # Get the company settings for the user
-    company_settings = CompanySettings.objects.filter(owner=user)
-    print(company_settings)
+    company_settings = None
+    enrolled_dic = {}
 
-    # Get courses associated with the user's company settings
-    courses = Course.objects.filter(company_name__in=company_settings)
-    print(courses)
+    if not isinstance(user, AnonymousUser) and user.is_authenticated:
+        # Only query company settings and enrollment for authenticated users
+        company_settings = CompanySettings.objects.filter(owner=user)
+        courses = Course.objects.filter(company_name__in=company_settings)
 
-    # Prepare dictionary to store enrollment status for each course
-    enrolled_dic = {course.title: Enrollment.objects.filter(user=user, course=course).exists() for course in courses}
-    lst = []
-    for key, value in enrolled_dic.items():
-        lst.append(value)
-    print(lst)
-        
-
-    print("Enrolled Dictionary:", enrolled_dic)
-
-    # Prefetch enrollments for the user
-    user_with_enrollments = User.objects.prefetch_related('enrollments').get(id=user.id)
-    print(user_with_enrollments)
+        # Dictionary to check enrollment status for each course
+        enrolled_dic = {
+            course.title: Enrollment.objects.filter(user=user, course=course).exists()
+            for course in courses
+        }
+    
+    # Pass enrolled_dic as a list to the template
+    enrolled_status_list = list(enrolled_dic.values())
 
     return render(request, 'courses.html', {
-        'courses': courses, 
-        'user': user, 
-        'company_settings': company_settings, 
-        'enrolled_dic': lst,
+        'courses': courses,
+        'user': user,
+        'company_settings': company_settings,
+        'enrolled_dic': enrolled_status_list,
     })
 
 

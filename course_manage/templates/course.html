@@ -11,148 +11,183 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-            color: #333;
-        }
+        /* General Styling */
+body {
+    font-family: 'Roboto', sans-serif;
+    color: #333;
+    background-color: #f9f9f9;
+}
 
-        .row {
-            margin-top: -70px;
-        }
+h1.course-title {
+    font-size: 2.5rem;
+    color: #02AAB0;
+    font-weight: 700;
+}
 
-        /* Navbar styling */
-        .navbar {
-            margin-bottom: 0; /* Remove bottom margin to make container start right below the navbar */
-        }
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
 
-        /* Container adjustments */
-        .container {
-            padding-top: 0rem; /* Ensure there's no extra padding on top */
-            padding-bottom: 1rem; /* Add padding to the bottom */
-        }
-        
-        .course-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
+/* Messages Styling */
+.messages .alert {
+    border-radius: 8px;
+    font-weight: 500;
+    animation: fadeOut 2s forwards;
+}
 
-        }
+/* Course Header Styling */
+.course-header {
+    margin-bottom: 20px;
+}
 
-        .course-title {
-            color: #343a40;
-        }
+.all-topics-titles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
 
-        .all-topics-titles {
-            white-space: nowrap; /* Prevents wrapping to the next line */
-            overflow-x: auto; /* Adds horizontal scroll if necessary */
-        }
-    
-        .all-topics-titles .badge {
-            display: inline-block; /* Ensures badges are inline */
-            margin-right: 10px; /* Adds spacing between badges */
-            font-size: 14px; /* Adjust font size as needed */
-        }
-    
-        .all-topics-titles .badge:last-child {
-            margin-right: 0; /* Removes margin from the last badge */
-        }
+.all-topics-titles .badge {
+    font-size: 1rem;
+    padding: 10px 15px;
+    border-radius: 12px;
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: transform 0.2s;
+}
 
-        .video-container {
-            display: flex;
-            margin-top: 1rem;
-        }
+.all-topics-titles .badge:hover {
+    transform: scale(1.05);
+}
 
-        .video-list {
-            flex: 1;
-            max-width: 40%; /* Adjust to control the width of the list */
-            padding-right: 20px;
-            border-right: 1px solid #ddd;
-            max-height: 600px;
-            overflow-y: scroll;
-        }
+/* Video Section Layout */
+.video-container {
+    display: flex;
+    gap: 20px;
+}
 
-        ::-webkit-scrollbar {
-            width: 0;
-            display: none;
-        }
+.video-list {
+    flex: 0 0 30%;
+    max-height: 70vh;
+    overflow-y: auto;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-size: 1rem;
+}
 
-        .video-list ul {
-            margin-top: 20px;
-        }
+.video-list ul {
+    padding: 0;
+    list-style: none;
+}
 
-        .video-player {
-            flex: 2;
-            padding-left: 20px;
-            margin-top: 20px;
-        }
+.video-list li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
 
-        .video-player video {
-            width: 100%;
-            height: auto;
-            border: 1px solid #ddd;
-        }
+.video-list li strong {
+    display: block;
+    color: #00796b;
+    font-weight: bold;
+}
 
-        .tabs-section {
-            margin-top: 20px;
-        }
+.video-list a.video-link {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+}
 
-        .nav-tabs .nav-link {
-            padding: 10px 15px;
-        }
+.video-list a.video-link:hover {
+    color: #00796b;
+    text-decoration: underline;
+}
 
-        .tab-content {
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-top: none;
-        }
+.video-list .fas.fa-play-circle {
+    margin-right: 10px;
+    font-size: 1.2rem;
+    transition: transform 0.3s;
+}
 
-        .course-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-        
-        .course-title {
-            color: #343a40;
-        }
-        
-        .all-topics-titles {
-            white-space: nowrap; /* Prevents wrapping to the next line */
-            overflow-x: auto; /* Adds horizontal scroll if necessary */
-        }
-        
-        .all-topics-titles .badge {
-            display: inline-block; /* Ensures badges are inline */
-            margin-right: 10px; /* Adds spacing between badges */
-            font-size: 14px; /* Adjust font size as needed */
-        }
-        
-        .all-topics-titles .badge:last-child {
-            margin-right: 0; /* Removes margin from the last badge */
-        }
-        
-        hr{
-            margin-top: 40px;
-        }
-        @media (max-width: 768px) {
-            .video-container {
-                flex-direction: column;
-            }
+.video-list a.video-link:hover .fas.fa-play-circle {
+    transform: scale(1.2);
+}
 
-            .video-list {
-                max-width: 100%; /* Full width for mobile */
-                border-right: none;
-                padding-right: 0;
-                margin-bottom: 1rem;
-            }
+/* Video Player Section */
+.video-player {
+    flex: 1;
+    position: relative;
+    background-color: #000;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
 
-            .video-player {
-                padding-left: 0;
-            }
-        }
+#mainVideoPlayer {
+    width: 100%;
+    border-radius: 8px 8px 0 0;
+}
+
+.tabs-section {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 0 0 8px 8px;
+}
+
+/* Tabs Styling */
+.nav-tabs .nav-link {
+    font-size: 1rem;
+    color: #333;
+    padding: 10px 20px;
+    border-radius: 4px 4px 0 0;
+    transition: background-color 0.3s;
+}
+
+.nav-tabs .nav-link.active {
+    color: #fff;
+    background-color: #00796b;
+}
+
+.nav-tabs .nav-link:hover {
+    background-color: #e0f7fa;
+}
+
+/* PDF & Exam Icons Styling */
+.pdf-icon {
+    font-size: 1.2rem;
+    margin-right: 10px;
+}
+
+.exam-icon {
+    font-size: 1.2rem;
+    color: #00796b;
+    margin-right: 10px;
+}
+
+/* Scrollbar Styling for Video List */
+.video-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.video-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #02AAB0, #00CDAC);
+    border-radius: 4px;
+}
+
+.video-list::-webkit-scrollbar-thumb:hover {
+    background: #00CDAC;
+}
+
+/* Keyframes for Messages Fade Out */
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; display: none; }
+}
+
     </style>
 </head>
 

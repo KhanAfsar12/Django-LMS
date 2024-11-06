@@ -155,8 +155,8 @@
             </div>
             {% endfor %}
         </div>
-        
-
+        {% include 'footer.html' %}
+    
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
@@ -180,7 +180,6 @@
     </script>
 
     <script>
-        // Automatically remove messages after 2 seconds
         setTimeout(function() {
             var messagesContainer = document.getElementById('messages');
             if (messagesContainer) {
@@ -192,6 +191,6 @@
             }
         }, 2000);
     </script>
-    {% include 'footer.html' %}
 </body>
+
 </html>
