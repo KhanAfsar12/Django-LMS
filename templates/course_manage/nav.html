@@ -180,16 +180,11 @@
             {% if company_settings.logo.url %}
             <a href="https://mumbaicodingclub.com/"><img src="{{ company_settings.logo.url }}"></a>
             {% else %}
-            <a href="">Mumbai Coding Club</a>
+            <a href="">Learn code with Afsar</a>
             {% endif %}
             
         </div>
-        <ul class="nav-links">
-            <li><a href="">Home</a></li>
-            <li><a href="">Service</a></li>
-            <li><a href="">About Us</a></li>
-            <li><a href="">Contact</a></li>
-        </ul>
+       
         {% if not request.user.is_authenticated %}
         <div class="logo-signup">
             <a href="{% url 'login' %}" class="btn">Login</a>

@@ -83,8 +83,8 @@ class Question(models.Model):
 
 class Choice(models.Model):
     question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='choices')
-    text = models.CharField(max_length=1000)
-    is_correct = models.BooleanField(default=False)
+    text = models.TextField()
+    is_correct = models.BooleanField(default=True)
 
     def __str__(self):
         return self.text
@@ -98,8 +98,6 @@ class Answer(models.Model):
 
     def __str__(self):
         return self.selected_choice.text
-
-
 
 
 

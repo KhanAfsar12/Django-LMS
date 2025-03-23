@@ -34,7 +34,7 @@ def viewCourse(request):
     # Pass enrolled_dic as a list to the template
     enrolled_status_list = list(enrolled_dic.values())
 
-    return render(request, 'courses.html', {
+    return render(request, 'course_manage/courses.html', {
         'courses': courses,
         'user': user,
         'company_settings': company_settings,
@@ -72,7 +72,7 @@ def ParticularCourse(request, id):
     announcement = Announcement.objects.filter(id=id)
     company_settings = CompanySettings.objects.first()
     if course:
-        return render(request, 'course.html', {'course': course, 'reviews': reviews, 'announcement': announcement, 'is_enrolled': is_enrolled})
+        return render(request, 'course_manage/course.html', {'course': course, 'reviews': reviews, 'announcement': announcement, 'is_enrolled': is_enrolled})
     else:
         return render(request, '404.html')
     
@@ -146,7 +146,7 @@ def enrollNow(request, course_id):
         return redirect('login')
     
     if Enrollment.objects.filter(user=request.user, course=course).exists():
-        return render(request, 'enroll_course.html', {'course': course, 'already_enrolled': True,})
+        return render(request, 'course_manage/enroll_course.html', {'course': course, 'already_enrolled': True,})
 
     if request.method == 'POST':
         form = EnrollNowForm(request.POST)
@@ -169,7 +169,7 @@ def enrollNow(request, course_id):
         'course': course_id,
         'form': form
     }
-    return render(request, 'enroll_course.html', context)
+    return render(request, 'course_manage/enroll_course.html', context)
 
 
 

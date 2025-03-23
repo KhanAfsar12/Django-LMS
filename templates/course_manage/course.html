@@ -192,7 +192,7 @@ h1.course-title {
 </head>
 
 <body>
-    {% include 'nav.html' %}
+    {% include 'course_manage/nav.html' %}
 
     <div class="container mt-5">
         <div id="messages" class="messages">
@@ -272,7 +272,7 @@ h1.course-title {
 
                                 <!-- Course overview -->
                                 <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
-                                    {% include 'overview.html' %}
+                                    {% include 'course_manage/overview.html' %}
                                    
                                 </div>
 
@@ -311,11 +311,11 @@ h1.course-title {
 
                                 <!-- Review -->
                                 <div class="tab-pane fade" id="reviews" role="tabpanel" aria-labelledby="reviews-tab">
-                                    {% include 'course_reviews.html' %}
-                                    {% include 'course_reviews_all.html' %}
+                                    {% include 'course_manage/course_reviews.html' %}
+                                    {% include 'course_manage/course_reviews_all.html' %}
                                 </div>
                                 <div class="tab-pane fade" id="announcement" role="tabpanel" aria-labelledby="announcement-tab">
-                                    {% include 'announcements.html' %}
+                                    {% include 'course_manage/announcements.html' %}
                                 </div>
                             </div>
                         </div> <!-- End of tabs section -->
@@ -324,7 +324,7 @@ h1.course-title {
             </div>
         </div>
     </div>
-    {% include 'footer.html' %}
+    {% include 'course_manage/footer.html' %}
 
     <!-- Bootstrap JS and dependencies -->
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
