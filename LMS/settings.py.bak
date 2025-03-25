@@ -161,18 +161,11 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '584242039160-7c0cv1o8c8rv7915ef9fh3jh320ksskc.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 
 
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
-# Environment variables configuration
-from dotenv import load_dotenv
-load_dotenv()
-# Google OAuth settings
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.getenv('GOOGLE_OAUTH_CLIENT_ID')
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('GOOGLE_OAUTH_CLIENT_SECRET')
-# Verify required environment variables
-if not all([SOCIAL_AUTH_GOOGLE_OAUTH2_KEY, SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET]):
-    raise ValueError("Missing required OAuth credentials in environment variables")
