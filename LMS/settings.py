@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'authentication',
     'customadmin',
     'ckeditor',
+    'django_extensions'
 ]
 
 MIDDLEWARE = [
