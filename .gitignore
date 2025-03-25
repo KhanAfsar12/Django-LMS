@@ -2,3 +2,10 @@ media/
 env/
 /secure_configs/
 .env
+# Secrets
+
+secure_configs/settings.json
+*.bak
+.env
+*.env*
+.env.local

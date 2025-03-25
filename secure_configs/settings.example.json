@@ -1,5 +1,4 @@
 {
-    "SOCIAL_AUTH_GOOGLE_OAUTH2_KEY": "584242039160-7c0cv1o8c8rv7915ef9fh3jh320ksskc.apps.googleusercontent.com",
-    "SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET": "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"
+  "SOCIAL_AUTH_GOOGLE_OAUTH2_KEY": "584242039160-7c0cv1o8c8rv7915ef9fh3jh320ksskc.apps.googleusercontent.com",
+  "SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET": "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",
 }
-  
