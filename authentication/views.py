@@ -25,7 +25,7 @@ def register(request):
             messages.warning(request, 'You have missing the field ')
     else:
         form = RegisterForm()
-    return render(request, 'register.html', {'form': form})
+    return render(request, 'authentication/register.html', {'form': form})
 
 
 def user_login(request):
@@ -41,7 +41,7 @@ def user_login(request):
                 messages.warning(request, 'You need to create your account')
     else:
         form = LoginForm()
-    return render(request, 'login.html', {'form': form})
+    return render(request, 'authentication/login.html', {'form': form})
 
 
 
@@ -74,7 +74,7 @@ def user_forget(request):
     else:
         form = ForgetForm()
 
-    return render(request, 'user_forget.html', {'form': form})
+    return render(request, 'authentication/user_forget.html', {'form': form})
 
 
 

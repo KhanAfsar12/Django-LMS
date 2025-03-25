@@ -15,23 +15,20 @@ from django.shortcuts import render
 
 def viewCourse(request):
     user = request.user
-    courses = Course.objects.all()  # Fetch all courses for anonymous users
+    courses = Course.objects.all() 
 
     company_settings = None
     enrolled_dic = {}
 
     if not isinstance(user, AnonymousUser) and user.is_authenticated:
-        # Only query company settings and enrollment for authenticated users
         company_settings = CompanySettings.objects.filter(owner=user)
-        courses = Course.objects.filter(company_name__in=company_settings)
+        courses = Course.objects.all()
 
-        # Dictionary to check enrollment status for each course
         enrolled_dic = {
             course.title: Enrollment.objects.filter(user=user, course=course).exists()
             for course in courses
         }
     
-    # Pass enrolled_dic as a list to the template
     enrolled_status_list = list(enrolled_dic.values())
 
     return render(request, 'course_manage/courses.html', {
@@ -110,7 +107,7 @@ def exam_details(request, exam_id):
             form = AnswerForm(prefix=str(question.id), question=question)
             question_form_pairs.append((question, form))
 
-    return render(request, 'Q&A.html', {'exam': exam, 'question_form_pairs': question_form_pairs})
+    return render(request, 'course_manage/Q&A.html', {'exam': exam, 'question_form_pairs': question_form_pairs})
 
 
 

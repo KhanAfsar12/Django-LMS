@@ -66,6 +66,35 @@
         a:hover {
             color: #2c4d73;
         }
+
+        .sidebar-google a{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1 solid black;
+            background-color: white;
+            padding: 10px 190px;
+            margin: auto;
+            width: fit-content;
+            border-color: #060606;
+          }
+          
+          
+          .btn-google{
+            text-decoration: none;
+            color: black;
+            font-size: 16px;
+            font-weight: bold;
+          }
+          
+          .sidebar-google i{
+            margin-right: 8px;
+          }
+          
+          .sidebar-header img {
+            max-height: 40px;
+          }
+          
     </style>
 </head>
 <body>
@@ -90,6 +119,11 @@
             <button type="submit" value="submit">Submit</button>
             <a href="{% url 'login' %}">Login</a>
         </form>
+        <div class="sidebar-google">
+            <a href="{% url 'social:begin' 'google-oauth2' %}" class="btn btn-google">
+                <i class="fa-brands fa-google"></i> Google
+            </a>
+        </div>
     </div>
 
 
