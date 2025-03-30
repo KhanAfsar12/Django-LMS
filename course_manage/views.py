@@ -1,17 +1,18 @@
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.forms import modelformset_factory
 from .forms import AnswerForm, EnrollNowForm, ReviewForm
 from .models import Announcement, Answer, CompanySettings, Course, Enrollment, Exam, ExamResult, Question, Review, Topic,  Video
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
+import spacy
 # Create your views here.
 
 
+nlp = spacy.load('en_core_web_sm')
 
-from django.contrib.auth.models import AnonymousUser
-from django.shortcuts import render
 
 def viewCourse(request):
     user = request.user
@@ -170,3 +171,25 @@ def enrollNow(request, course_id):
 
 
 
+
+
+def extract_resume_details(request):
+    text = """
+    John Doe is a Software Developer with 5 years of experience in Python and Django.
+    He has worked at Google and Microsoft.
+    Skills include Machine Learning, REST APIs, and Database Management.
+    """
+    doc = nlp(text)
+
+    name = [ent.text for ent in doc.ents if ent.label_ == "PERSON"]
+
+    skills = [token.text for token in doc if token.pos_ == "PROPN" or token.pos_ == "NOUN"]
+
+    companies = [ent.text for ent in doc.ents if ent.label_ == "ORG"]
+
+    data = {
+        "name": name[0] if name else "Unknown",
+        "skills": list(set(skills)),
+        "companies": list(set(companies))
+    }
+    return JsonResponse(data)
