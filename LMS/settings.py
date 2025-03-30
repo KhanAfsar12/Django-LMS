@@ -42,12 +42,8 @@ INSTALLED_APPS = [
     'authentication',
     'customadmin',
     'ckeditor',
-<<<<<<< HEAD
     'django_extensions',
     'social_django',
-=======
-    'django_extensions'
->>>>>>> 54fb3efbf3f95277ba87d02031ae3980816b5d52
 ]
 
 MIDDLEWARE = [
@@ -58,10 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-<<<<<<< HEAD
     'social_django.middleware.SocialAuthExceptionMiddleware',
-=======
->>>>>>> 54fb3efbf3f95277ba87d02031ae3980816b5d52
 ]
 
 ROOT_URLCONF = 'LMS.urls'
@@ -160,7 +153,6 @@ CKEDITOR_CONFIGS = {
 from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
-<<<<<<< HEAD
 }
 
 
@@ -184,6 +176,3 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.getenv('GOOGLE_OAUTH_CLIENT_SECRET')
 # Verify required environment variables
 if not all([SOCIAL_AUTH_GOOGLE_OAUTH2_KEY, SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET]):
     raise ValueError("Missing required OAuth credentials in environment variables")
-=======
-}
->>>>>>> 54fb3efbf3f95277ba87d02031ae3980816b5d52

@@ -1,5 +1,4 @@
 media/
-<<<<<<< HEAD
 env/
 /secure_configs/
 .env
@@ -10,6 +9,4 @@ secure_configs/settings.json
 .env
 *.env*
 .env.local
-=======
 env/
->>>>>>> 54fb3efbf3f95277ba87d02031ae3980816b5d52
