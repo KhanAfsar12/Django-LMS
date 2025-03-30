@@ -23,7 +23,10 @@ urlpatterns = [
     path('dj-admin/', admin.site.urls),
     path('', include('course_manage.urls')),
     path('authentication/', include('authentication.urls')),
+<<<<<<< HEAD
     path('social_auth/', include('social_django.urls', namespace='social')),
+=======
+>>>>>>> 54fb3efbf3f95277ba87d02031ae3980816b5d52
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

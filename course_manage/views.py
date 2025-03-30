@@ -1,10 +1,15 @@
+<<<<<<< HEAD
 from django.http import HttpResponse, JsonResponse
+=======
+from django.http import HttpResponse
+>>>>>>> 54fb3efbf3f95277ba87d02031ae3980816b5d52
 from django.shortcuts import get_object_or_404, redirect, render
 from django.forms import modelformset_factory
 from .forms import AnswerForm, EnrollNowForm, ReviewForm
 from .models import Announcement, Answer, CompanySettings, Course, Enrollment, Exam, ExamResult, Question, Review, Topic,  Video
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+<<<<<<< HEAD
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.auth.models import User
 import spacy
@@ -17,19 +22,44 @@ nlp = spacy.load('en_core_web_sm')
 def viewCourse(request):
     user = request.user
     courses = Course.objects.all() 
+=======
+from django.contrib.auth.models import User
+# Create your views here.
+
+
+
+from django.contrib.auth.models import AnonymousUser
+from django.shortcuts import render
+
+def viewCourse(request):
+    user = request.user
+    courses = Course.objects.all()  # Fetch all courses for anonymous users
+>>>>>>> 54fb3efbf3f95277ba87d02031ae3980816b5d52
 
     company_settings = None
     enrolled_dic = {}
 
     if not isinstance(user, AnonymousUser) and user.is_authenticated:
+<<<<<<< HEAD
         company_settings = CompanySettings.objects.filter(owner=user)
         courses = Course.objects.all()
 
+=======
+        # Only query company settings and enrollment for authenticated users
+        company_settings = CompanySettings.objects.filter(owner=user)
+        courses = Course.objects.filter(company_name__in=company_settings)
+
+        # Dictionary to check enrollment status for each course
+>>>>>>> 54fb3efbf3f95277ba87d02031ae3980816b5d52
         enrolled_dic = {
             course.title: Enrollment.objects.filter(user=user, course=course).exists()
             for course in courses
         }
     
+<<<<<<< HEAD
+=======
+    # Pass enrolled_dic as a list to the template
+>>>>>>> 54fb3efbf3f95277ba87d02031ae3980816b5d52
     enrolled_status_list = list(enrolled_dic.values())
 
     return render(request, 'course_manage/courses.html', {
@@ -108,7 +138,11 @@ def exam_details(request, exam_id):
             form = AnswerForm(prefix=str(question.id), question=question)
             question_form_pairs.append((question, form))
 
+<<<<<<< HEAD
     return render(request, 'course_manage/Q&A.html', {'exam': exam, 'question_form_pairs': question_form_pairs})
+=======
+    return render(request, 'Q&A.html', {'exam': exam, 'question_form_pairs': question_form_pairs})
+>>>>>>> 54fb3efbf3f95277ba87d02031ae3980816b5d52
 
 
 
@@ -171,6 +205,7 @@ def enrollNow(request, course_id):
 
 
 
+<<<<<<< HEAD
 
 
 def extract_resume_details(request):
@@ -193,3 +228,5 @@ def extract_resume_details(request):
         "companies": list(set(companies))
     }
     return JsonResponse(data)
+=======
+>>>>>>> 54fb3efbf3f95277ba87d02031ae3980816b5d52
