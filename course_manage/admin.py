@@ -1,10 +1,23 @@
 from django.contrib import admin
 from .models import Announcement, CompanySettings, Course, Enrollment, ExamResult, Review, Topic, Video, PDF, Exam, Question, Answer, Choice
+from django_admin_listfilter_dropdown.filters import (
+    DropdownFilter,
+    RelatedDropdownFilter,
+    ChoiceDropdownFilter
+)
+
 # Register your models here.
 
 class CourseAdmin(admin.ModelAdmin):
     list_display = ['title', 'description', 'credits', 'start_date', 'end_date', 'course_image', 'created_by']
     search_fields = ['title', 'description', 'created_by__username']
+    list_filter = (
+        ('company_name', RelatedDropdownFilter),
+        ('credits', DropdownFilter),
+        ('start_date', DropdownFilter),
+        ('end_date', DropdownFilter),
+        ('created_by', RelatedDropdownFilter)
+    )
 
  
 admin.site.register(Course, CourseAdmin)
@@ -54,3 +67,10 @@ admin.site.register(Announcement)
 admin.site.register(Enrollment)
 
 admin.site.register(ExamResult)
+
+
+
+
+admin.site.site_header = "LMS Admin Panel"
+admin.site.site_title = "Admin Dashboard"
+admin.site.index_title = "Wlecome"
