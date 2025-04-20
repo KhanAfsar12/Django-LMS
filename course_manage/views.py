@@ -65,6 +65,7 @@ def viewCourse(request):
 def get_course_with_topics_and_videos(id):
     try:
         course = Course.objects.prefetch_related('topics__videos', 'topics__pdfs', 'topics__exams').select_related('created_by').get(id=id)
+        print(course)
         return course
 
     except Course.DoesNotExist:
@@ -86,12 +87,21 @@ def ParticularCourse(request, id):
     request.session['course_id'] = id
     course = get_course_with_topics_and_videos(id)
 
+
     announcement = Announcement.objects.filter(id=id)
     company_settings = CompanySettings.objects.first()
-    if course:
-        return render(request, 'course_manage/course.html', {'course': course, 'reviews': reviews, 'announcement': announcement, 'is_enrolled': is_enrolled})
+    has_videos = Video.objects.filter(topic__course=course)
+    context =  {
+        'course': course, 
+        'reviews': reviews, 
+        'announcement': announcement, 
+        'is_enrolled': is_enrolled
+        }
+    
+    if has_videos:
+        return render(request, 'course_manage/course.html',context)
     else:
-        return render(request, '404.html')
+        return render(request, 'course_manage/404.html', context)
     
 
 

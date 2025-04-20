@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ course.title }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f6f8;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 40px auto;
+            background-color: #fff;
+            padding: 40px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            border-radius: 12px;
+        }
+
+        .no-video-section {
+            text-align: center;
+            padding: 50px 20px;
+        }
+
+        .no-video-section img {
+            width: 180px;
+            opacity: 0.8;
+        }
+
+        .no-video-section h2 {
+            font-size: 26px;
+            color: #333;
+            margin-top: 30px;
+        }
+
+        .no-video-section p {
+            font-size: 18px;
+            color: #666;
+            margin: 10px 0 20px;
+        }
+
+        .request-button {
+            padding: 12px 25px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .request-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    {% include 'course_manage/nav.html' %}
+
+    <div class="container">
+        {% if has_videos %}
+            <!-- Show your course content here -->
+            <h1>Welcome to {{ course.title }}</h1>
+            <p>Videos are available. Enjoy learning!</p>
+        {% else %}
+            <div class="no-video-section">
+                <img src="https://cdn-icons-png.flaticon.com/512/2940/2940593.png" alt="No video available">
+                <h2>No Videos Available Yet</h2>
+                <p>This course doesn’t have any videos yet.</p>
+                <p>Please contact the admin or check back later.</p>
+                <a href="#" class="request-button">Request Video Upload</a>
+            </div>
+        {% endif %}
+    </div>
+
+    {% include 'course_manage/footer.html' %}
+</body>
+</html>
