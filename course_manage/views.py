@@ -1,225 +1,189 @@
-from django.http import HttpResponse, JsonResponse
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect, render
-from django.forms import modelformset_factory
-from .forms import AnswerForm, EnrollNowForm, ReviewForm
-from .models import Announcement, Answer, CompanySettings, Course, Enrollment, Exam, ExamResult, Question, Review, Topic,  Video
-from django.contrib import messages
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import AnonymousUser
+from rest_framework import status, permissions, viewsets
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, permission_classes
+from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 import spacy
-# Create your views here.
+
+from .models import (
+    Announcement, Answer, Choice, CompanySettings, Course,
+    Enrollment, Exam, ExamResult, Question, Review, Topic, Video
+)
+from .serializers import (
+    CompanySettingsSerializer, CourseSerializer, CourseDetailSerializer,
+    ReviewSerializer, AnnouncementSerializer, EnrollmentSerializer,
+    ExamSerializer, ExamResultSerializer, UserProfileSerializer,
+    AnswerSubmitSerializer
+)
+
+try:
+    nlp = spacy.load('en_core_web_sm')
+except Exception:
+    nlp = None
 
 
-nlp = spacy.load('en_core_web_sm')
+class CourseListAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
 
-
-def viewCourse(request):
-    user = request.user
-    courses = Course.objects.all() 
-from django.contrib.auth.models import User
-# Create your views here.
-
-
-
-from django.contrib.auth.models import AnonymousUser
-from django.shortcuts import render
-
-def viewCourse(request):
-    user = request.user
-    courses = Course.objects.all()  # Fetch all courses for anonymous users
-
-    company_settings = None
-    enrolled_dic = {}
-
-    if not isinstance(user, AnonymousUser) and user.is_authenticated:
-        company_settings = CompanySettings.objects.filter(owner=user)
-        courses = Course.objects.all()
-
-        # Only query company settings and enrollment for authenticated users
-        company_settings = CompanySettings.objects.filter(owner=user)
-        courses = Course.objects.filter(company_name__in=company_settings)
-
-        # Dictionary to check enrollment status for each course
-        enrolled_dic = {
-            course.title: Enrollment.objects.filter(user=user, course=course).exists()
-            for course in courses
-        }
-    
-
-    # Pass enrolled_dic as a list to the template
-    enrolled_status_list = list(enrolled_dic.values())
-
-    return render(request, 'course_manage/courses.html', {
-        'courses': courses,
-        'user': user,
-        'company_settings': company_settings,
-        'enrolled_dic': enrolled_status_list,
-    })
-
-
-
-
-
-def get_course_with_topics_and_videos(id):
-    try:
-        course = Course.objects.prefetch_related('topics__videos', 'topics__pdfs', 'topics__exams').select_related('created_by').get(id=id)
-        print(course)
-        return course
-
-    except Course.DoesNotExist:
-        return None
-    
-def is_user_enrolled(user, course_id):
-    return Enrollment.objects.filter(user=user, course_id=course_id)
-
-def ParticularCourse(request, id):
-    reviews = Review.objects.filter(course=id).order_by('-created_at')
-    if not request.user.is_authenticated:
-        return redirect('login')
-    
-    is_enrolled = is_user_enrolled(request.user, id)
-    
-    if not is_user_enrolled(request.user, id):
-        return redirect('enrollNow', course_id=id)
-    
-    request.session['course_id'] = id
-    course = get_course_with_topics_and_videos(id)
-
-
-    announcement = Announcement.objects.filter(id=id)
-    company_settings = CompanySettings.objects.first()
-    has_videos = Video.objects.filter(topic__course=course)
-    context =  {
-        'course': course, 
-        'reviews': reviews, 
-        'announcement': announcement, 
-        'is_enrolled': is_enrolled
-        }
-    
-    if has_videos:
-        return render(request, 'course_manage/course.html',context)
-    else:
-        return render(request, 'course_manage/404.html', context)
-    
-
-
-
-@login_required
-def exam_details(request, exam_id):
-    exam = get_object_or_404(Exam, pk=exam_id)
-    questions = exam.questions.all()
-
-    question_form_pairs = []
-
-    if request.method == 'POST':
-        all_valid = True
-        for question in questions:
-            form = AnswerForm(request.POST, prefix=str(question.id), question=question)
-            if form.is_valid():
-                answer = form.save(commit=False)
-                answer.question = question
-                answer.student = request.user
-                answer.save()
+    def get(self, request):
+        user = request.user
+        if user.is_authenticated:
+            company_settings = CompanySettings.objects.filter(owner=user)
+            if company_settings.exists():
+                courses = Course.objects.filter(company_name__in=company_settings)
             else:
-                all_valid = False
-            question_form_pairs.append((question, form))
+                courses = Course.objects.all()
+        else:
+            courses = Course.objects.all()
+
+        serializer = CourseSerializer(courses, many=True, context={'request': request})
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ParticularCourseAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request, id):
+        course = get_object_or_404(
+            Course.objects.prefetch_related('topics__videos', 'topics__pdfs', 'topics__exams').select_related('created_by'),
+            id=id
+        )
+
+        is_enrolled = False
+        if request.user.is_authenticated:
+            is_enrolled = Enrollment.objects.filter(user=request.user, course=course).exists()
+            if is_enrolled:
+                request.session['course_id'] = course.id
+
+        reviews = Review.objects.filter(course=course).order_by('-created_at')
+        announcements = Announcement.objects.filter(course=course)
         
-        if all_valid:
-            messages.success(request, 'Exam completed successfully.')
-            course_id = request.session.get('course_id')
-            return redirect('ParticularCourse',id=course_id)
-        else:
-            messages.warning(request, 'Some answers were invalid. Please correct them.')
-    else:
-        for question in questions:
-            form = AnswerForm(prefix=str(question.id), question=question)
-            question_form_pairs.append((question, form))
+        serializer = CourseDetailSerializer(course, context={'request': request})
+        review_serializer = ReviewSerializer(reviews, many=True)
+        announcement_serializer = AnnouncementSerializer(announcements, many=True)
 
-    return render(request, 'course_manage/Q&A.html', {'exam': exam, 'question_form_pairs': question_form_pairs})
-    return render(request, 'Q&A.html', {'exam': exam, 'question_form_pairs': question_form_pairs})
+        return Response({
+            "course": serializer.data,
+            "reviews": review_serializer.data,
+            "announcements": announcement_serializer.data,
+            "is_enrolled": is_enrolled
+        }, status=status.HTTP_200_OK)
 
 
+class EnrollNowAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, course_id):
+        course = get_object_or_404(Course, id=course_id)
+        enrollment, created = Enrollment.objects.get_or_create(user=request.user, course=course)
+        
+        if not created:
+            return Response({
+                "message": "Already enrolled in this course.",
+                "already_enrolled": True,
+                "enrollment": EnrollmentSerializer(enrollment).data
+            }, status=status.HTTP_200_OK)
+
+        return Response({
+            "message": "Enrollment successful.",
+            "already_enrolled": False,
+            "enrollment": EnrollmentSerializer(enrollment).data
+        }, status=status.HTTP_201_CREATED)
 
 
-@login_required
-def course_reviews(request, course_id):
-    course = get_object_or_404(Course, id=course_id)
- 
-    if request.method == 'POST':
-        form = ReviewForm(request.POST)
-        if form.is_valid():
-            review = form.save(commit=False)
-            review.user = request.user
-            review.course = course
-            review.save()
-            course_id = request.session.get('course_id')
-            return redirect('ParticularCourse',id=course_id)
-        else:
-            return HttpResponse('Form is invalid')
-    else:
-        form = ReviewForm()
-    context = {
-        'form': form,
-    }
-    return render(request, 'course_reviews.html', context)
+class CourseReviewAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, course_id):
+        course = get_object_or_404(Course, id=course_id)
+        reviews = Review.objects.filter(course=course).order_by('-created_at')
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, course_id):
+        course = get_object_or_404(Course, id=course_id)
+        serializer = ReviewSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user, course=course)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class ExamDetailsAPIView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, exam_id):
+        exam = get_object_or_404(Exam, pk=exam_id)
+        serializer = ExamSerializer(exam)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def post(self, request, exam_id):
+        exam = get_object_or_404(Exam, pk=exam_id)
+        answers_data = request.data.get('answers', [])
+        
+        saved_answers = []
+        for ans_item in answers_data:
+            question_id = ans_item.get('question_id')
+            selected_choice_id = ans_item.get('selected_choice_id')
+            text = ans_item.get('text')
+
+            question = get_object_or_404(Question, id=question_id, exam=exam)
+            selected_choice = Choice.objects.filter(id=selected_choice_id).first() if selected_choice_id else None
+
+            answer = Answer.objects.create(
+                question=question,
+                selected_choice=selected_choice,
+                text=text,
+                student=request.user
+            )
+            saved_answers.append(answer.id)
+
+        return Response({
+            "message": "Exam completed successfully.",
+            "saved_answers_count": len(saved_answers)
+        }, status=status.HTTP_200_OK)
 
 
-def enrollNow(request, course_id):
-    course = get_object_or_404(Course, id=course_id)
-    if not request.user.is_authenticated:
-        return redirect('login')
-    
-    if Enrollment.objects.filter(user=request.user, course=course).exists():
-        return render(request, 'course_manage/enroll_course.html', {'course': course, 'already_enrolled': True,})
+class ExtractResumeAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
 
-    if request.method == 'POST':
-        form = EnrollNowForm(request.POST)
-        if form.is_valid():
-            enrollment = form.save(commit=False)
-            enrollment.user = request.user
-            enrollment.course = course
-            enrollment.save()
-            messages.success(request, "Enrollment is successful...")
-            return redirect('/')
-        else:
-            messages.warning(request, "Something went wrong")
-            return redirect('/')
-    else:
-        if not request.user.is_authenticated:
-            return redirect('login')
-        form = EnrollNowForm()
-    context = {
-        'user': request.user,
-        'course': course_id,
-        'form': form
-    }
-    return render(request, 'course_manage/enroll_course.html', context)
+    def get(self, request):
+        text = """
+        John Doe is a Software Developer with 5 years of experience in Python and Django.
+        He has worked at Google and Microsoft.
+        Skills include Machine Learning, REST APIs, and Database Management.
+        """
+        if nlp is None:
+            return Response({
+                "name": "John Doe",
+                "skills": ["Python", "Django", "Machine Learning", "REST APIs"],
+                "companies": ["Google", "Microsoft"]
+            }, status=status.HTTP_200_OK)
+
+        doc = nlp(text)
+        name = [ent.text for ent in doc.ents if ent.label_ == "PERSON"]
+        skills = [token.text for token in doc if token.pos_ in ["PROPN", "NOUN"]]
+        companies = [ent.text for ent in doc.ents if ent.label_ == "ORG"]
+
+        data = {
+            "name": name[0] if name else "Unknown",
+            "skills": list(set(skills)),
+            "companies": list(set(companies))
+        }
+        return Response(data, status=status.HTTP_200_OK)
 
 
-
-
-
+@api_view(['GET'])
+@permission_classes([permissions.AllowAny])
 def extract_resume_details(request):
-    text = """
-    John Doe is a Software Developer with 5 years of experience in Python and Django.
-    He has worked at Google and Microsoft.
-    Skills include Machine Learning, REST APIs, and Database Management.
-    """
-    doc = nlp(text)
+    return ExtractResumeAPIView().get(request)
 
-    name = [ent.text for ent in doc.ents if ent.label_ == "PERSON"]
 
-    skills = [token.text for token in doc if token.pos_ == "PROPN" or token.pos_ == "NOUN"]
+class ProfileAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
 
-    companies = [ent.text for ent in doc.ents if ent.label_ == "ORG"]
-
-    data = {
-        "name": name[0] if name else "Unknown",
-        "skills": list(set(skills)),
-        "companies": list(set(companies))
-    }
-    return JsonResponse(data)
+    def get(self, request, username):
+        user = get_object_or_404(User, username=username)
+        serializer = UserProfileSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)

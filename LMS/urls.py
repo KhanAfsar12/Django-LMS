@@ -24,6 +24,8 @@ urlpatterns = [
     path('', include('course_manage.urls')),
     path('authentication/', include('authentication.urls')),
     path('social_auth/', include('social_django.urls', namespace='social')),
+    path('grappelli/', include('grappelli.urls')),  # Add this line
+
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

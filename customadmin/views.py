@@ -1,30 +1,24 @@
-from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, render
-from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
-from django.contrib import messages
-# Create your views here.
+from rest_framework import status, permissions
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import login
+from authentication.serializers import UserSerializer
+from .serializers import AdminLoginSerializer
 
 
-def admin_login(request):
-    try:
-        if request.user.is_authenticated:
-            return redirect('/dashboard')
-        
-        if request.method == 'POST':
-            username = request.POSt.get('username')
-            password = request.POST.get('password')
-            user_obj = User.objects.filter(username=username)
-            if not user_obj.exists():
-                messages.info(request, 'Account not found')
-                return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
-            
-            user_obj = authenticate(username=username, password=password)
-            if user_obj and user_obj.is_superuser:
-                login(request, user_obj)
-                return redirect('/dashboard/')
-            messages.info(request, 'Invalid password')
-            return redirect('/')
-        return render(request, 'login.html')
-    except Exception as e:
-        print(e)
+class AdminLoginAPIView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def post(self, request):
+        serializer = AdminLoginSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.validated_data['user']
+            login(request, user)
+            token, _ = Token.objects.get_or_create(user=user)
+            return Response({
+                "message": "Admin login successful.",
+                "user": UserSerializer(user).data,
+                "token": token.key
+            }, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

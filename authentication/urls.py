@@ -1,13 +1,18 @@
-from django.shortcuts import redirect
 from django.urls import path
-from .views import  register, resetPassword, user_forget, user_login, user_logout
-
-
+from .views import (
+    RegisterAPIView,
+    LoginAPIView,
+    LogoutAPIView,
+    ForgetPasswordAPIView,
+    ResetPasswordAPIView,
+    MeAPIView
+)
 
 urlpatterns = [
-    path('register/', register, name='register'),
-    path('login/', user_login, name='login'),
-    path('logout/', user_logout, name='logout'),
-    path('user_forget/', user_forget, name='user_forget'),
-    path('resetPassword/', resetPassword, name='resetPassword'),
+    path('register/', RegisterAPIView.as_view(), name='register'),
+    path('login/', LoginAPIView.as_view(), name='login'),
+    path('logout/', LogoutAPIView.as_view(), name='logout'),
+    path('me/', MeAPIView.as_view(), name='me'),
+    path('user_forget/', ForgetPasswordAPIView.as_view(), name='user_forget'),
+    path('resetPassword/', ResetPasswordAPIView.as_view(), name='resetPassword'),
 ]
